@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="Heralds of War"
-run/main_scene="uid://btlr4jm3degp3"
+run/main_scene="uid://bw4ys7cn1q7an"
 config/features=PackedStringArray("4.4", "GL Compatibility")
 config/icon="res://assets/icons/icon.svg"
 
