@@ -3,8 +3,8 @@ extends TileMapLayer
 var is_tile_focused: bool = false
 
 @onready var swordsman: Unit = $"../Swordsman"
-@onready var hover_tile: Sprite2D = $"../TerrainHoverTile"
-@onready var focus_tile: Sprite2D = $"../TerrainFocusTile"
+@onready var hover_tile: Sprite2D = $"../BoardHoverTile"
+@onready var focus_tile: Sprite2D = $"../BoardFocusTile"
 
 
 func _input(event: InputEvent) -> void:
