@@ -3,8 +3,8 @@ extends TileMapLayer
 var is_tile_focused: bool = false
 
 @onready var swordsman: Unit = $"../Swordsman"
-@onready var hovered_tile: Sprite2D = $"../TerrainHoveredTile"
-@onready var focused_tile: Sprite2D = $"../TerrainFocusedTile"
+@onready var hover_tile: Sprite2D = $"../TerrainHoverTile"
+@onready var focus_tile: Sprite2D = $"../TerrainFocusTile"
 
 
 func _input(event: InputEvent) -> void:
@@ -14,7 +14,7 @@ func _input(event: InputEvent) -> void:
 		if get_used_rect().has_point(mouse_map_position):
 			hover_cell(mouse_map_position)
 		else:
-			hovered_tile.hide()
+			hover_tile.hide()
 
 	if event is InputEventMouseButton and event.is_pressed():
 		var mouse_map_position = get_mouse_map_position()
@@ -40,17 +40,17 @@ func get_mouse_map_position() -> Vector2i:
 
 
 func focus_cell(map_index: Vector2i) -> void:
-	focused_tile.position = map_index
-	focused_tile.show()
+	focus_tile.position = map_index
+	focus_tile.show()
 	is_tile_focused = true
 
 
 func unfocus_cell() -> void:
-	focused_tile.hide()
+	focus_tile.hide()
 	is_tile_focused = false
 
 
 func hover_cell(map_index: Vector2i) -> void:
-	if hovered_tile.hidden:
-		hovered_tile.show()
-	hovered_tile.position = map_to_local(map_index)
+	if hover_tile.hidden:
+		hover_tile.show()
+	hover_tile.position = map_to_local(map_index)
