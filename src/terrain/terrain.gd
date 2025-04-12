@@ -20,13 +20,17 @@ func _input(event: InputEvent) -> void:
 		var mouse_map_position = get_mouse_map_position()
 		var swordsman_map_position = local_to_map(swordsman.offset_position)
 
-		if mouse_map_position == swordsman_map_position:
-			if not is_tile_focused:
-				focus_cell(map_to_local(mouse_map_position))
-		else:
+		if event.button_index == MOUSE_BUTTON_LEFT:
+			if mouse_map_position == swordsman_map_position:
+				if not is_tile_focused:
+					focus_cell(map_to_local(mouse_map_position))
+			else:
+				if is_tile_focused:
+					swordsman.move(map_to_local(mouse_map_position))
+				unfocus_cell()
+		elif event.button_index == MOUSE_BUTTON_RIGHT:
 			if is_tile_focused:
-				swordsman.move(map_to_local(mouse_map_position))
-			unfocus_cell()
+				unfocus_cell()
 
 
 func get_mouse_map_position() -> Vector2i:
