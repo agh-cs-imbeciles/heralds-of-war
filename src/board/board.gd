@@ -1,10 +1,39 @@
 extends TileMapLayer
 
+enum HighlightTile { HOVER, FOCUS }
+
 var is_tile_focused: bool = false
 
+var highlight_tile: PackedScene = preload(
+	"res://scenes/board/highlight-tile.tscn"
+)
+var hover_tile: Sprite2D
+var focus_tile: Sprite2D
 @onready var swordsman: Unit = $"../Swordsman"
-@onready var hover_tile: Sprite2D = $"../BoardHoverTile"
-@onready var focus_tile: Sprite2D = $"../BoardFocusTile"
+
+
+func _ready() -> void:
+	instantiate_highlight_tile(HighlightTile.HOVER)
+	instantiate_highlight_tile(HighlightTile.FOCUS)
+
+
+func instantiate_highlight_tile(tile_type: HighlightTile) -> void:
+	var tile: Sprite2D = highlight_tile.instantiate()
+
+	match (tile_type):
+		HighlightTile.HOVER:
+			tile.name = "BoardHoverTile"
+			tile.modulate = Color("#aabfe6", 0.784)
+			tile.z_index = 64
+			hover_tile = tile
+		HighlightTile.FOCUS:
+			tile.name = "BoardFocusTile"
+			tile.modulate = Color("#2ed9e6", 0.784)
+			tile.z_index = 65
+			focus_tile = tile
+
+	tile.hide()
+	add_sibling.call_deferred(tile)
 
 
 func _input(event: InputEvent) -> void:
