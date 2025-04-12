@@ -1,0 +1,83 @@
+[gd_scene load_steps=12 format=3 uid="uid://bxqxpso4ylcse"]
+
+[ext_resource type="Texture2D" uid="uid://0iqwd7stojc5" path="res://assets/sprites/units/hooded-knight-idle.png" id="1_giobj"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_giobj"]
+atlas = ExtResource("1_giobj")
+region = Rect2(0, 0, 100, 100)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8w6po"]
+atlas = ExtResource("1_giobj")
+region = Rect2(100, 0, 100, 100)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_gqhlb"]
+atlas = ExtResource("1_giobj")
+region = Rect2(200, 0, 100, 100)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_2rbse"]
+atlas = ExtResource("1_giobj")
+region = Rect2(300, 0, 100, 100)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_t8i60"]
+atlas = ExtResource("1_giobj")
+region = Rect2(400, 0, 100, 100)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_dfw1p"]
+atlas = ExtResource("1_giobj")
+region = Rect2(500, 0, 100, 100)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_jlpio"]
+atlas = ExtResource("1_giobj")
+region = Rect2(600, 0, 100, 100)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_y8yrr"]
+atlas = ExtResource("1_giobj")
+region = Rect2(700, 0, 100, 100)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_1ir3w"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_giobj")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_8w6po")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_gqhlb")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_2rbse")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_t8i60")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_dfw1p")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_jlpio")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_y8yrr")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 12.0
+}]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_giobj"]
+height = 74.0
+
+[node name="Swordsman" type="CharacterBody2D"]
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_1ir3w")
+animation = &"idle"
+autoplay = "idle"
+frame_progress = 0.905258
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(-11, 6)
+scale = Vector2(-2.3, 1.1)
+shape = SubResource("CapsuleShape2D_giobj")
