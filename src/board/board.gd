@@ -1,5 +1,7 @@
 extends TileMapLayer
 
+class_name Board
+
 enum HighlightTile { HOVER, FOCUS }
 
 var is_tile_focused: bool = false
@@ -24,8 +26,8 @@ func instantiate_swordsman() -> Unit:
 
 	swordsman.stamina = 6
 	swordsman.offset = Vector2(8, -20)
-	swordsman.offset_position = map_to_local(get_used_rect().size / 2)
-	swordsman.position = swordsman.offset_position + swordsman.offset
+	swordsman.board = self
+	swordsman.set_position_from_map(get_used_rect().size / 2)
 	swordsman.scale = Vector2(0.5, 0.5)
 	swordsman.z_index = 256
 
@@ -64,15 +66,14 @@ func _input(event: InputEvent) -> void:
 
 	if event is InputEventMouseButton and event.is_pressed():
 		var mouse_map_position = get_mouse_map_position()
-		var swordsman_map_position = local_to_map(swordsman.offset_position)
 
 		if event.button_index == MOUSE_BUTTON_LEFT:
-			if mouse_map_position == swordsman_map_position:
+			if mouse_map_position == swordsman.map_position:
 				if not is_tile_focused:
 					focus_cell(map_to_local(mouse_map_position))
 			else:
 				if is_tile_focused:
-					swordsman.move(map_to_local(mouse_map_position))
+					swordsman.move(mouse_map_position)
 				unfocus_cell()
 		elif event.button_index == MOUSE_BUTTON_RIGHT:
 			if is_tile_focused:
