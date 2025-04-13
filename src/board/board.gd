@@ -4,6 +4,7 @@ enum HighlightTile { HOVER, FOCUS }
 
 var is_tile_focused: bool = false
 
+var swordsman_scene: PackedScene = preload("res://scenes/units/swordsman.tscn")
 var highlight_tile: PackedScene = preload(
 	"res://scenes/board/highlight-tile.tscn"
 )
@@ -13,8 +14,24 @@ var focus_tile: Sprite2D
 
 
 func _ready() -> void:
+	instantiate_swordsman()
 	instantiate_highlight_tile(HighlightTile.HOVER)
 	instantiate_highlight_tile(HighlightTile.FOCUS)
+
+
+func instantiate_swordsman() -> Unit:
+	swordsman = swordsman_scene.instantiate()
+
+	swordsman.stamina = 6
+	swordsman.offset = Vector2(8, -20)
+	swordsman.offset_position = map_to_local(get_used_rect().size / 2)
+	swordsman.position = swordsman.offset_position + swordsman.offset
+	swordsman.scale = Vector2(0.5, 0.5)
+	swordsman.z_index = 256
+
+	add_sibling.call_deferred(swordsman)
+
+	return swordsman
 
 
 func instantiate_highlight_tile(tile_type: HighlightTile) -> void:
