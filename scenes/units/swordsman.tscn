@@ -72,6 +72,8 @@ height = 74.0
 
 [node name="Swordsman" type="CharacterBody2D"]
 script = ExtResource("1_8w6po")
+stamina = null
+offset = null
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_1ir3w")
