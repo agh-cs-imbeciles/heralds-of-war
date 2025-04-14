@@ -77,7 +77,7 @@ func instantiate_highlight_tile(tile_type: HighlightTile) -> Sprite2D:
 			tile.z_index = 65
 			movable_tiles.append(tile)
 
-	if not HighlightTile.MOVABLE:
+	if tile_type != HighlightTile.MOVABLE:
 		tile.hide()
 
 	add_sibling.call_deferred(tile)
