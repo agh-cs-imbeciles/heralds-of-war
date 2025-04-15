@@ -1,5 +1,6 @@
-[gd_scene load_steps=2 format=3 uid="uid://duqxbwqid80mr"]
+[gd_scene load_steps=3 format=3 uid="uid://duqxbwqid80mr"]
 
+[ext_resource type="FontFile" uid="uid://w8gtmlejd3ia" path="res://assets/fonts/ThaleahFat.ttf" id="1_ldhvw"]
 [ext_resource type="Script" uid="uid://drw3dg1egk23u" path="res://src/ui/menu/menu_buttons.gd" id="1_q18yf"]
 
 [node name="MainMenu" type="Control"]
@@ -23,13 +24,17 @@ grow_vertical = 2
 [node name="StartGameButton" type="Button" parent="VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
-text = "Start game"
+theme_override_fonts/font = ExtResource("1_ldhvw")
+theme_override_font_sizes/font_size = 48
+text = "START GAME"
 script = ExtResource("1_q18yf")
 
 [node name="ExitGameButton" type="Button" parent="VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
-text = "ExitGame"
+theme_override_fonts/font = ExtResource("1_ldhvw")
+theme_override_font_sizes/font_size = 48
+text = "EXIT GAME"
 script = ExtResource("1_q18yf")
 
 [connection signal="pressed" from="VBoxContainer/StartGameButton" to="VBoxContainer/StartGameButton" method="_on_start_game_button_pressed"]
