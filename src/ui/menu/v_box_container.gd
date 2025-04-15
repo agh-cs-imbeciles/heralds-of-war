@@ -6,7 +6,6 @@ var control_children: Array[Control]
 func _ready() -> void:
 	control_children.assign(get_children()
 		.filter(func (child): return child is Control))
-	print(control_children)
 	
 	
 func _on_resized() -> void:
