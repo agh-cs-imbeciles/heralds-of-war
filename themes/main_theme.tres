@@ -3,5 +3,5 @@
 [ext_resource type="FontFile" uid="uid://w8gtmlejd3ia" path="res://assets/fonts/ThaleahFat.ttf" id="1_funo8"]
 
 [resource]
-resource_name = "menu_theme"
+resource_name = "main_theme"
 default_font = ExtResource("1_funo8")
