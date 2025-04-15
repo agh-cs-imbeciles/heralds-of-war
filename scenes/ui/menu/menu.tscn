@@ -1,7 +1,8 @@
-[gd_scene load_steps=3 format=3 uid="uid://duqxbwqid80mr"]
+[gd_scene load_steps=4 format=3 uid="uid://duqxbwqid80mr"]
 
-[ext_resource type="FontFile" uid="uid://w8gtmlejd3ia" path="res://assets/fonts/ThaleahFat.ttf" id="1_ldhvw"]
 [ext_resource type="Script" uid="uid://drw3dg1egk23u" path="res://src/ui/menu/menu_buttons.gd" id="1_q18yf"]
+[ext_resource type="Script" uid="uid://d0sgraw7iigi" path="res://src/ui/menu/v_box_container.gd" id="1_r4xos"]
+[ext_resource type="Theme" uid="uid://b0yl85gha4apv" path="res://themes/menu_theme.tres" id="2_r4xos"]
 
 [node name="MainMenu" type="Control"]
 layout_mode = 3
@@ -11,31 +12,34 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="."]
+[node name="AspectRatioContainer" type="AspectRatioContainer" parent="."]
 layout_mode = 1
 anchors_preset = -1
-anchor_left = 0.35
-anchor_top = 0.45
-anchor_right = 0.65
-anchor_bottom = 0.65
+anchor_top = 0.4
+anchor_right = 1.0
+anchor_bottom = 0.6
 grow_horizontal = 2
 grow_vertical = 2
+ratio = 2.0
 
-[node name="StartGameButton" type="Button" parent="VBoxContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="AspectRatioContainer"]
+layout_mode = 2
+script = ExtResource("1_r4xos")
+
+[node name="StartGameButton" type="Button" parent="AspectRatioContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
-theme_override_fonts/font = ExtResource("1_ldhvw")
-theme_override_font_sizes/font_size = 48
+theme = ExtResource("2_r4xos")
 text = "START GAME"
 script = ExtResource("1_q18yf")
 
-[node name="ExitGameButton" type="Button" parent="VBoxContainer"]
+[node name="ExitGameButton" type="Button" parent="AspectRatioContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
-theme_override_fonts/font = ExtResource("1_ldhvw")
-theme_override_font_sizes/font_size = 48
+theme = ExtResource("2_r4xos")
 text = "EXIT GAME"
 script = ExtResource("1_q18yf")
 
-[connection signal="pressed" from="VBoxContainer/StartGameButton" to="VBoxContainer/StartGameButton" method="_on_start_game_button_pressed"]
-[connection signal="pressed" from="VBoxContainer/ExitGameButton" to="VBoxContainer/StartGameButton" method="_on_exit_game_button_pressed"]
+[connection signal="resized" from="AspectRatioContainer/VBoxContainer" to="AspectRatioContainer/VBoxContainer" method="_on_resized"]
+[connection signal="pressed" from="AspectRatioContainer/VBoxContainer/StartGameButton" to="AspectRatioContainer/VBoxContainer/StartGameButton" method="_on_start_game_button_pressed"]
+[connection signal="pressed" from="AspectRatioContainer/VBoxContainer/ExitGameButton" to="AspectRatioContainer/VBoxContainer/StartGameButton" method="_on_exit_game_button_pressed"]
