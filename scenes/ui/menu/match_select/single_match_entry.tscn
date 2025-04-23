@@ -1,0 +1,29 @@
+[gd_scene load_steps=3 format=3 uid="uid://bp0h3drudi8ii"]
+
+[ext_resource type="Script" uid="uid://yogqn8a608mf" path="res://src/ui/menu/match_select/single_match_entry.gd" id="1_jmxgq"]
+[ext_resource type="Script" uid="uid://of1qw03onoay" path="res://src/ui/menu/match_select/button.gd" id="2_cw6wu"]
+
+[node name="SingleMatchEntry" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+script = ExtResource("1_jmxgq")
+
+[node name="Button" type="Button" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("2_cw6wu")
+
+[connection signal="property_list_changed" from="." to="." method="_on_property_list_changed"]
+[connection signal="ready" from="." to="." method="_on_ready"]
+[connection signal="pressed" from="Button" to="Button" method="_on_pressed"]
+[connection signal="resized" from="Button" to="Button" method="_on_resized"]
