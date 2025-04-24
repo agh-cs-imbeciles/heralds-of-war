@@ -1,6 +1,7 @@
-[gd_scene load_steps=6 format=4 uid="uid://bw4ys7cn1q7an"]
+[gd_scene load_steps=7 format=4 uid="uid://bw4ys7cn1q7an"]
 
 [ext_resource type="Script" uid="uid://orar4yfbku55" path="res://src/ui/camera.gd" id="1_5vgm2"]
+[ext_resource type="Script" uid="uid://ctumvccgx6tl8" path="res://src/game/abstract/abstract_match.gd" id="1_dvtnx"]
 [ext_resource type="Texture2D" uid="uid://cn1pc7vuyyn86" path="res://assets/sprites/terrain/tileset.png" id="2_dvtnx"]
 [ext_resource type="Script" uid="uid://c0mx0vvijq1vj" path="res://src/board/board.gd" id="3_g0v03"]
 
@@ -132,6 +133,8 @@ tile_size = Vector2i(32, 16)
 sources/0 = SubResource("TileSetAtlasSource_yqjtg")
 
 [node name="Game" type="Node2D"]
+script = ExtResource("1_dvtnx")
+match_name = "Match 1"
 
 [node name="Camera2D" type="Camera2D" parent="."]
 position = Vector2(16, 160)

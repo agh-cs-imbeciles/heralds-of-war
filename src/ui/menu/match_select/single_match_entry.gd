@@ -1,13 +1,19 @@
 class_name SingleMatchEntry extends Control
 
-@onready var __button = $Button
-@export var Text = ""
+@onready var __button: AbstractChangeSceneButton = $Button
+@export var text: String = ""
+@export var scene_to_switch: PackedScene
+
+
+func __set_button_properties(button_text: String, scene: PackedScene) -> void:
+	__button.text = button_text
+	__button.scene_to_change = scene
 
 
 func _on_property_list_changed() -> void:
 	if __button:
-		__button.text = Text
+		__set_button_properties(text, scene_to_switch)
 
 
 func _on_ready() -> void:
-	__button.text = Text
+	__set_button_properties(text, scene_to_switch)
