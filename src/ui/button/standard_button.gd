@@ -1,4 +1,4 @@
-class_name AbstractResizableFontButton extends Button
+class_name StandardButton extends Button
 
 @export var font_height_divider: float = 4
 

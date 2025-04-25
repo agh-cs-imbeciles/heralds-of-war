@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=3 uid="uid://bp0h3drudi8ii"]
 
 [ext_resource type="Script" uid="uid://yogqn8a608mf" path="res://src/ui/menu/match_select/single_match_entry.gd" id="1_jmxgq"]
-[ext_resource type="Script" uid="uid://cmj15i03jv6b" path="res://src/ui/button/abstract_change_scene_button.gd" id="2_cw6wu"]
+[ext_resource type="Script" uid="uid://cmj15i03jv6b" path="res://src/ui/button/change_scene_button.gd" id="2_cw6wu"]
 [ext_resource type="Theme" uid="uid://b0yl85gha4apv" path="res://themes/main_theme.tres" id="2_od57r"]
 
 [node name="SingleMatchEntry" type="Control"]
@@ -24,7 +24,6 @@ grow_horizontal = 2
 grow_vertical = 2
 theme = ExtResource("2_od57r")
 script = ExtResource("2_cw6wu")
-font_height_divider = 2.0
 
 [connection signal="property_list_changed" from="." to="." method="_on_property_list_changed"]
 [connection signal="ready" from="." to="." method="_on_ready"]

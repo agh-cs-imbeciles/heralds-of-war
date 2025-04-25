@@ -1,6 +1,6 @@
 class_name SingleMatchEntry extends Control
 
-@onready var __button: AbstractChangeSceneButton = $Button
+@onready var __button: ChangeSceneButton = $Button
 @export var text: String = ""
 @export var scene_to_switch: PackedScene
 

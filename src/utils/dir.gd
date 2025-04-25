@@ -1,4 +1,4 @@
-class_name DirUtils extends Node
+class_name Dir extends Node
 
 
 static func get_all_scenes_paths_from_folder(path: String) -> Array[String]:

@@ -1,4 +1,4 @@
-class_name ScenesList extends AbstractSceneList
+class_name MatchSceneList extends AbstractSceneList
 
 
 func __load_list_elements(matches_paths: Array[String]) -> void:

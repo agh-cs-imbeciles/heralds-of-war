@@ -7,10 +7,10 @@ class_name AbstractSceneList extends Control
 
 
 func __get_scenes_paths() -> Array[String]:
-	return DirUtils.get_all_scenes_paths_from_folder(scenes_directory)
+	return Dir.get_all_scenes_paths_from_folder(scenes_directory)
 
 
-func __load_list_elements(matches_paths: Array[String]) -> void:
+func __load_list_elements(scene_paths: Array[String]) -> void:
 	pass
 
 
