@@ -1,4 +1,4 @@
-class_name SingleMatchEntry extends Control
+class_name MatchEntry extends Control
 
 @onready var __button: ChangeSceneButton = $Button
 @export var text: String = ""
