@@ -1,8 +1,9 @@
-[gd_scene load_steps=4 format=3 uid="uid://duqxbwqid80mr"]
+[gd_scene load_steps=5 format=3 uid="uid://duqxbwqid80mr"]
 
-[ext_resource type="Script" uid="uid://drw3dg1egk23u" path="res://src/ui/menu/buttons.gd" id="1_q18yf"]
-[ext_resource type="Script" uid="uid://d0sgraw7iigi" path="res://src/ui/menu/v_box_container.gd" id="1_r4xos"]
+[ext_resource type="Script" uid="uid://cmj15i03jv6b" path="res://src/ui/button/change_scene_button.gd" id="2_q18yf"]
 [ext_resource type="Theme" uid="uid://b0yl85gha4apv" path="res://themes/main_theme.tres" id="2_r4xos"]
+[ext_resource type="Script" uid="uid://db4yufu5pnw23" path="res://src/ui/button/exit_button.gd" id="3_ldhvw"]
+[ext_resource type="PackedScene" uid="uid://chotpswhlkwwg" path="res://scenes/ui/menu/match_select.tscn" id="3_r4xos"]
 
 [node name="MainMenu" type="Control"]
 layout_mode = 3
@@ -24,22 +25,23 @@ ratio = 2.0
 
 [node name="VBoxContainer" type="VBoxContainer" parent="AspectRatioContainer"]
 layout_mode = 2
-script = ExtResource("1_r4xos")
 
 [node name="StartGameButton" type="Button" parent="AspectRatioContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
 theme = ExtResource("2_r4xos")
 text = "START GAME"
-script = ExtResource("1_q18yf")
+script = ExtResource("2_q18yf")
+scene_to_change = ExtResource("3_r4xos")
 
 [node name="ExitGameButton" type="Button" parent="AspectRatioContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
 theme = ExtResource("2_r4xos")
 text = "EXIT GAME"
-script = ExtResource("1_q18yf")
+script = ExtResource("3_ldhvw")
 
-[connection signal="resized" from="AspectRatioContainer/VBoxContainer" to="AspectRatioContainer/VBoxContainer" method="_on_resized"]
-[connection signal="pressed" from="AspectRatioContainer/VBoxContainer/StartGameButton" to="AspectRatioContainer/VBoxContainer/StartGameButton" method="_on_start_game_button_pressed"]
-[connection signal="pressed" from="AspectRatioContainer/VBoxContainer/ExitGameButton" to="AspectRatioContainer/VBoxContainer/StartGameButton" method="_on_exit_game_button_pressed"]
+[connection signal="pressed" from="AspectRatioContainer/VBoxContainer/StartGameButton" to="AspectRatioContainer/VBoxContainer/StartGameButton" method="__change_scene"]
+[connection signal="resized" from="AspectRatioContainer/VBoxContainer/StartGameButton" to="AspectRatioContainer/VBoxContainer/StartGameButton" method="__resize_font"]
+[connection signal="pressed" from="AspectRatioContainer/VBoxContainer/ExitGameButton" to="AspectRatioContainer/VBoxContainer/ExitGameButton" method="__exit_game"]
+[connection signal="resized" from="AspectRatioContainer/VBoxContainer/ExitGameButton" to="AspectRatioContainer/VBoxContainer/ExitGameButton" method="__resize_font"]
