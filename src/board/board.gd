@@ -123,6 +123,11 @@ func get_mouse_map_position() -> Vector2i:
 	return map_position
 
 
+func move_unit_if_legal(to: Vector2i) -> void:
+	if swordsman.can_move(to):
+		swordsman.move(to)
+
+
 func on_focus_cell(map_index: Vector2i) -> void:
 	focus_cell(map_index)
 	moves = swordsman.get_legal_moves(map_index)
@@ -142,8 +147,8 @@ func render_movable_cells(legal_moves: Array[Vector2i]) -> void:
 
 
 func on_unfocus_cell(map_index: Vector2i, move: bool = false) -> void:
-	if move and swordsman.can_move(map_index):
-		swordsman.move(map_index)
+	if move:
+		move_unit_if_legal(map_index)
 
 	unrender_movable_tiles()
 	unfocus_cell()
