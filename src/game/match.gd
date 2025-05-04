@@ -50,7 +50,7 @@ func _handle_placement(map_pos: Vector2i) -> void:
 
 	var swordsman = board.swordsman_scene.instantiate()
 	swordsman.board = board
-	swordsman.stamina = 6
+	swordsman.stamina = 60
 	swordsman.offset = Vector2(8, -20)
 	swordsman.set_position_from_map(map_pos)
 	swordsman.player_id = player
