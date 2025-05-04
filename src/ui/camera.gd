@@ -98,9 +98,9 @@ func __get_camera_movement_mouse() -> Vector2:
 func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.pressed:
 		var new_zoom := zoom
-		if event.button_index == MOUSE_BUTTON_WHEEL_UP:
+		if event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
 			new_zoom = zoom / (1.0 + ZOOM_STEP)
-		elif event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
+		elif event.button_index == MOUSE_BUTTON_WHEEL_UP:
 			new_zoom = zoom * (1.0 + ZOOM_STEP)
 
 		zoom = new_zoom.clamp(Vector2.ONE * MIN_ZOOM_FACTOR, Vector2.ONE * MAX_ZOOM_FACTOR)
