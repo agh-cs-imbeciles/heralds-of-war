@@ -2,12 +2,15 @@ extends TileMapLayer
 
 class_name Board
 
-enum HighlightTile { HOVER, FOCUS, MOVABLE }
+enum HighlightTile { HOVER, FOCUS, MOVABLE, ATTACKABLE }
+enum Mode { ATTACK, MOVE, NONE }
+var Command = Operation.Command
 
 var is_tile_focused: bool = false
 var moves: Array[Vector2i] = []
 
 var path_finder: AStar2D = AStar2D.new()
+var board_input_manager: BoardInputManager = BoardInputManager.new(self)
 
 var swordsman_scene: PackedScene = preload("res://scenes/units/swordsman.tscn")
 var highlight_tile: PackedScene = preload(
@@ -16,16 +19,23 @@ var highlight_tile: PackedScene = preload(
 
 var hover_tile: Sprite2D
 var focus_tile: Sprite2D
-var movable_tiles: Array[Sprite2D] = []
-var swordsman: Unit
-
+var current_tile: Sprite2D
+var current_mode: Mode = Mode.NONE 
+var marked_tiles: Array[Sprite2D] = []
+var current_unit: Unit
+var units: Array[Unit] = []
 
 func _ready() -> void:
 	init_path_finder()
 
-	instantiate_swordsman()
+	var swordsman1 = instantiate_swordsman(Vector2i(5, 6))
+	var swordsman2 = instantiate_swordsman(Vector2i(5, 8))
 	instantiate_highlight_tile(HighlightTile.HOVER)
 	instantiate_highlight_tile(HighlightTile.FOCUS)
+	
+	current_tile = hover_tile
+	units.append(swordsman1)
+	units.append(swordsman2)
 
 
 func init_path_finder() -> void:
@@ -42,16 +52,20 @@ func init_path_finder() -> void:
 			path_finder.connect_points(i, j)
 
 
-func instantiate_swordsman() -> Unit:
-	swordsman = swordsman_scene.instantiate()
+func instantiate_swordsman(position: Vector2i) -> Unit:
+	var swordsman: Unit = swordsman_scene.instantiate()
 
-	swordsman.stamina = 6
+	swordsman.start_stamina = 6
+	swordsman.start_health = 6
+	swordsman.start_attack_strength = 3
+	swordsman.start_attack_cost = 1
+	swordsman.start_defense_percent = 40
 	swordsman.offset = Vector2(8, -20)
 	swordsman.board = self
-	swordsman.set_position_from_map(get_used_rect().size / 2)
+	swordsman.start_map_position = position
 	swordsman.scale = Vector2(0.5, 0.5)
 	swordsman.z_index = 256
-
+	swordsman.reset_intitial_state()
 	add_sibling.call_deferred(swordsman)
 
 	return swordsman
@@ -72,12 +86,17 @@ func instantiate_highlight_tile(tile_type: HighlightTile) -> Sprite2D:
 			tile.z_index = 66
 			focus_tile = tile
 		HighlightTile.MOVABLE:
-			tile.name = "BoardMovableTile%s" % movable_tiles.size()
+			tile.name = "BoardMovableTile%s" % marked_tiles.size()
 			tile.modulate = Color("#6dd4d6", 0.584)
 			tile.z_index = 65
-			movable_tiles.append(tile)
+			marked_tiles.append(tile)
+		HighlightTile.ATTACKABLE:
+			tile.name = "BoardAttackableTile%s" % marked_tiles.size()
+			tile.modulate = Color("#ff4040", 0.584)
+			tile.z_index = 65
+			marked_tiles.append(tile)
 
-	if tile_type != HighlightTile.MOVABLE:
+	if tile_type != HighlightTile.MOVABLE or tile_type != HighlightTile.ATTACKABLE:
 		tile.hide()
 
 	add_sibling.call_deferred(tile)
@@ -86,35 +105,54 @@ func instantiate_highlight_tile(tile_type: HighlightTile) -> Sprite2D:
 
 
 func _input(event: InputEvent) -> void:
-	if event is InputEventMouseMotion:
-		var mouse_map_position = get_mouse_map_position()
+	
+	var operation: Operation = board_input_manager.process(event)
 
-		if get_used_rect().has_point(mouse_map_position):
-			hover_cell(mouse_map_position)
-		else:
-			hover_tile.hide()
-
-	if event is InputEventMouseButton and event.is_pressed():
-		var mouse_map_position = get_mouse_map_position()
-
-		if event.button_index == MOUSE_BUTTON_LEFT:
-			if mouse_map_position == swordsman.map_position:
-				if not is_tile_focused:
-					on_focus_cell(mouse_map_position)
+	match (operation.command):
+		Command.NONE: 
+			pass
+		Command.HOVER:
+			hover_cell(operation.position, current_tile)
+		Command.UNIT_MOVE_CLICK:
+			clear_board_user_input_effects()
+			current_unit = operation.unit
+			current_mode = Mode.MOVE
+			on_focus_cell(operation.position)
+		Command.UNIT_ATTACK_CLICK: 
+			clear_board_user_input_effects()
+			if current_mode == Mode.ATTACK and operation.unit != current_unit:
+				on_unfocus_cell(operation.position, current_unit, current_mode)
+				current_unit = null
+				current_mode = Mode.NONE
 			else:
-				if is_tile_focused:
-					on_unfocus_cell(mouse_map_position, true)
-		elif event.button_index == MOUSE_BUTTON_RIGHT:
-			if is_tile_focused:
-				on_unfocus_cell(mouse_map_position, false)
+				current_unit = operation.unit
+				current_mode = Mode.ATTACK
+				on_focus_cell(operation.position, HighlightTile.ATTACKABLE)
+		Command.FIELD_CLICK:
+			clear_board_user_input_effects()
+			if current_mode == Mode.MOVE:
+				on_unfocus_cell(operation.position, current_unit, current_mode)
+			current_mode = Mode.NONE
+			current_unit = null
+		Command.ATTACK_FIELD_CLICK:
+			clear_board_user_input_effects()
+			if current_mode == Mode.ATTACK:
+				on_unfocus_cell(operation.position, current_unit, current_mode)
+			current_mode = Mode.NONE
+			current_unit = null
+			
+
+func clear_board_user_input_effects() -> void:
+	unfocus_cell()
+	unrender_marked_tiles()
 
 
 func get_cell_id(map_index: Vector2i) -> int:
-		var max_index = get_used_rect().size.max_axis_index()
-		var max_axis_value = get_used_rect().size[max_index]
-		var max_axis_value_power_10 = 10**ceili(log(max_axis_value) / log(10))
+	var max_index = get_used_rect().size.max_axis_index()
+	var max_axis_value = get_used_rect().size[max_index]
+	var max_axis_value_power_10 = 10**ceili(log(max_axis_value) / log(10))
 
-		return max_axis_value_power_10 * map_index.x + map_index.y
+	return max_axis_value_power_10 * map_index.x + map_index.y
 
 
 func get_mouse_map_position() -> Vector2i:
@@ -123,15 +161,15 @@ func get_mouse_map_position() -> Vector2i:
 	return map_position
 
 
-func move_unit_if_legal(to: Vector2i) -> void:
-	if swordsman.can_move(to):
-		swordsman.move(to)
-
-
-func on_focus_cell(map_index: Vector2i) -> void:
+func on_focus_cell(map_index: Vector2i, cell_type: HighlightTile = HighlightTile.MOVABLE) -> void:
 	focus_cell(map_index)
-	moves = swordsman.get_legal_moves(map_index)
-	render_movable_cells(moves)
+	
+	var cells
+	if cell_type == HighlightTile.MOVABLE:
+		cells = current_unit.get_legal_moves(map_index)
+	elif cell_type == HighlightTile.ATTACKABLE:
+		cells = current_unit.get_attack_fields(map_index)
+	render_cells(cells, cell_type)
 
 
 func focus_cell(map_index: Vector2i) -> void:
@@ -140,18 +178,29 @@ func focus_cell(map_index: Vector2i) -> void:
 	is_tile_focused = true
 
 
-func render_movable_cells(legal_moves: Array[Vector2i]) -> void:
+func render_cells(legal_moves: Array[Vector2i], tile_type: HighlightTile = HighlightTile.MOVABLE) -> void:
 	for cell in legal_moves:
-		var tile = instantiate_highlight_tile(HighlightTile.MOVABLE)
+		var tile = instantiate_highlight_tile(tile_type)
 		tile.position = map_to_local(cell)
+		tile.show()
 
 
-func on_unfocus_cell(map_index: Vector2i, move: bool = false) -> void:
-	if move:
-		move_unit_if_legal(map_index)
-
-	unrender_movable_tiles()
+func on_unfocus_cell(map_index: Vector2i, unit: Unit, action: Mode = Mode.MOVE) -> void:
+	perform_unit_action(map_index, unit, action)
+	unrender_marked_tiles()
 	unfocus_cell()
+
+
+func perform_unit_action(map_index: Vector2i, unit: Unit, action: Mode = Mode.MOVE) -> void:
+	if action == Mode.MOVE and unit.can_move(map_index):
+		unit.move(map_index)
+	elif action == Mode.ATTACK and unit.is_attackable(map_index):
+		var unit_to_attack = get_unit_on_positon(map_index)
+		if unit_to_attack != null:
+			current_mode = Mode.NONE
+			if unit.stamina >= unit.attack_cost:
+				unit.deplete_stamina(unit.attack_cost)
+				unit_to_attack.recieve_damage(unit.attack_strength)
 
 
 func unfocus_cell() -> void:
@@ -159,14 +208,42 @@ func unfocus_cell() -> void:
 	is_tile_focused = false
 
 
-func unrender_movable_tiles() -> void:
-	for cell in movable_tiles:
+func unrender_marked_tiles() -> void:
+	for cell in marked_tiles:
 		get_parent().remove_child(cell)
 	moves.clear()
-	movable_tiles.clear()
+	marked_tiles.clear()
 
 
-func hover_cell(map_index: Vector2i) -> void:
-	if hover_tile.hidden:
-		hover_tile.show()
-	hover_tile.position = map_to_local(map_index)
+func hover_cell(map_index: Vector2i, tile: Sprite2D) -> void:
+	if tile.hidden:
+		tile.show()
+	tile.position = map_to_local(map_index)
+
+
+func get_square(center: Vector2i, space: int) -> Array[Vector2i]:
+	var cells = get_used_cells()
+	var square_cells: Array[Vector2i]
+	
+	for i in range(-space - 1, space + 2):
+		for j in range(-space - 1, space + 2):
+			var new_vector = center
+			new_vector.x += i
+			new_vector.y += j
+			if new_vector in get_used_cells():
+				square_cells.append(new_vector)
+	return square_cells
+	
+
+func get_unit_on_positon(map_index: Vector2i) -> Unit:
+	for unit in units:
+		if unit.map_position == map_index:
+			return unit
+	return null
+	
+
+func get_blocked_cells() -> Array[Vector2i]:
+	var blocked_cells: Array[Vector2i] = []
+	for unit in units:
+		blocked_cells.append(unit.map_position)
+	return blocked_cells
