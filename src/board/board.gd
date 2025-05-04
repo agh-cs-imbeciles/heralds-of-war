@@ -8,6 +8,8 @@ enum HighlightTile { HOVER, FOCUS, MOVABLE }
 
 var is_tile_focused: bool = false
 var moves: Array[Vector2i] = []
+var cost: Dictionary = {}
+
 var path_finder: AStar2D = AStar2D.new()
 
 var swordsman_scene: PackedScene = preload("res://scenes/units/swordsman.tscn")
@@ -23,6 +25,8 @@ var swordsman: Unit
 
 
 func _ready() -> void:
+	load_board_cost()
+
 	init_path_finder()
 	instantiate_highlight_tile(HighlightTile.HOVER)
 	instantiate_highlight_tile(HighlightTile.FOCUS)
@@ -30,11 +34,28 @@ func _ready() -> void:
 	connect("tile_clicked", Callable(self, "_on_tile_clicked"))
 
 
+func load_board_cost() -> void:
+	var file = FileAccess.open(
+		"res://assets/resources/board_cost.json",
+		FileAccess.READ
+	)
+	var parsed_file = JSON.parse_string(file.get_as_text())
+
+	for atlas_coords in parsed_file:
+		if typeof(parsed_file[atlas_coords]) != TYPE_STRING:
+			continue
+		if parsed_file[atlas_coords] != "inf":
+			continue
+
+		parsed_file[atlas_coords] = 9223372036854775807  # 2^63 - 1
+
+	cost = parsed_file
+
+
 func init_path_finder() -> void:
 	for cell in get_used_cells():
 		var i = get_cell_id(cell)
-		path_finder.add_point(i, cell)
-
+		path_finder.add_point(i, cell, get_cell_cost(cell))
 	for cell in get_used_cells():
 		var i = get_cell_id(cell)
 		for surrounding_cell in get_surrounding_cells(cell):
@@ -101,6 +122,12 @@ func _on_tile_clicked(map_index: Vector2i) -> void:
 				on_unfocus_cell(map_index, true)
 		_:
 			game_match._on_board_cell_clicked(map_index)
+
+func get_cell_cost(map_index: Vector2i) -> int:
+	var atlas_coords = get_cell_atlas_coords(map_index)
+	var coord_key = "%s,%s" % [atlas_coords.x, atlas_coords.y]
+	return cost.get(coord_key, 9223372036854775807)
+
 
 func get_cell_id(map_index: Vector2i) -> int:
 		var max_index = get_used_rect().size.max_axis_index()

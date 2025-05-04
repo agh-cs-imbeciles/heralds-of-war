@@ -28,7 +28,12 @@ func get_legal_moves(map_index: Vector2i) -> Array[Vector2i]:
 		var t = board.get_cell_id(cell)
 		var path = board.path_finder.get_point_path(s, t)
 
-		if 1 < path.size() and path.size() <= stamina:
+		var path_cost = 0
+		for path_cell in path:
+			var u = board.get_cell_id(path_cell)
+			path_cost += board.path_finder.get_point_weight_scale(u)
+
+		if path.size() > 1 and path_cost <= stamina:
 			legal_moves.append(cell)
 
 	return legal_moves
