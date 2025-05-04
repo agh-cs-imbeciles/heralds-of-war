@@ -37,7 +37,17 @@ func load_board_cost() -> void:
 		"res://assets/resources/board_cost.json",
 		FileAccess.READ
 	)
-	cost = JSON.parse_string(file.get_as_text())
+	var parsed_file = JSON.parse_string(file.get_as_text())
+
+	for atlas_coords in parsed_file:
+		if typeof(parsed_file[atlas_coords]) != TYPE_STRING:
+			continue
+		if parsed_file[atlas_coords] != "inf":
+			continue
+
+		parsed_file[atlas_coords] = 9223372036854775807  # 2^63 - 1
+
+	cost = parsed_file
 
 
 func init_path_finder() -> void:
