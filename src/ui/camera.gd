@@ -10,9 +10,12 @@ enum CameraMoveController { KEYBOARD = 0b01, MOUSE = 0b10 }
 @export_range(0, 100, 1) var edge_activation_threshold = 8
 @export_range(0, 2000, 10) var move_speed = 200
 
-const MIN_ZOOM_FACTOR := 1.0
-const MAX_ZOOM_FACTOR := 6.0
-const ZOOM_STEP := 0.1
+@export_group("Zoom")
+@export var min_zoom_factor := 1.0
+@export var max_zoom_factor := 6.0
+@export var zoom_step := 0.3
+
+var zoom_velocity := 0.0
 
 func _process(delta: float) -> void:
 	var controller = 0
@@ -28,6 +31,19 @@ func _process(delta: float) -> void:
 		direction = direction.normalized()
 		global_position += direction * move_speed * delta
 
+	# Zoom logic
+	if abs(zoom_velocity) > 0.001:
+		var factor = 1.0 + zoom_velocity * delta
+		var new_zoom = zoom * factor
+		zoom = new_zoom.clamp(Vector2.ONE * min_zoom_factor, Vector2.ONE * max_zoom_factor)
+		zoom_velocity = lerp(zoom_velocity, 0.0, 5 * delta)
+
+func _unhandled_input(event: InputEvent) -> void:
+	if event is InputEventMouseButton and event.pressed:
+		if event.button_index == MOUSE_BUTTON_WHEEL_UP:
+			zoom_velocity += zoom_step
+		elif event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
+			zoom_velocity -= zoom_step
 
 func get_camera_movement(controller: int) -> Vector2:
 	const keyboard_mask = 0b01
@@ -95,12 +111,3 @@ func __get_camera_movement_mouse() -> Vector2:
 
 	return direction
 	
-func _unhandled_input(event: InputEvent) -> void:
-	if event is InputEventMouseButton and event.pressed:
-		var new_zoom := zoom
-		if event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
-			new_zoom = zoom / (1.0 + ZOOM_STEP)
-		elif event.button_index == MOUSE_BUTTON_WHEEL_UP:
-			new_zoom = zoom * (1.0 + ZOOM_STEP)
-
-		zoom = new_zoom.clamp(Vector2.ONE * MIN_ZOOM_FACTOR, Vector2.ONE * MAX_ZOOM_FACTOR)
