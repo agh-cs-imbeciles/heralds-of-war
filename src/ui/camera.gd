@@ -13,7 +13,7 @@ enum CameraMoveController { KEYBOARD = 0b01, MOUSE = 0b10 }
 @export_group("Zoom")
 @export var min_zoom_factor := 1.0
 @export var max_zoom_factor := 6.0
-@export var zoom_step := 0.3
+@export var zoom_step := 0.6
 @export var zoom_smooth_factor := 5.0
 
 var zoom_velocity := 0.0
