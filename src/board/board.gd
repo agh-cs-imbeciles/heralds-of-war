@@ -1,34 +1,33 @@
 extends TileMapLayer
-
 class_name Board
+
+signal tile_hovered(map_pos: Vector2i)
+signal tile_clicked(map_pos: Vector2i)
 
 enum HighlightTile { HOVER, FOCUS, MOVABLE }
 
 var is_tile_focused: bool = false
 var moves: Array[Vector2i] = []
-
 var path_finder: AStar2D = AStar2D.new()
 
 var swordsman_scene: PackedScene = preload("res://scenes/units/swordsman.tscn")
-var highlight_tile: PackedScene = preload(
-	"res://scenes/board/highlight-tile.tscn"
-)
+var highlight_tile: PackedScene = preload("res://scenes/board/highlight-tile.tscn")
 
 var hover_tile: Sprite2D
 var focus_tile: Sprite2D
 var movable_tiles: Array[Sprite2D] = []
 var swordsman: Unit
 
-signal cell_clicked(map_pos: Vector2i)
-@onready var match = get_parent() as Match
+@onready var game_match = get_parent() as Match
+@onready var phase_manager = get_node("../PhaseManager") as PhaseManager
 
 
 func _ready() -> void:
 	init_path_finder()
-
-	#instantiate_swordsman()
 	instantiate_highlight_tile(HighlightTile.HOVER)
 	instantiate_highlight_tile(HighlightTile.FOCUS)
+	connect("tile_hovered", Callable(self, "_on_tile_hovered"))
+	connect("tile_clicked", Callable(self, "_on_tile_clicked"))
 
 
 func init_path_finder() -> void:
@@ -43,21 +42,6 @@ func init_path_finder() -> void:
 				continue
 			var j = get_cell_id(surrounding_cell)
 			path_finder.connect_points(i, j)
-
-
-func instantiate_swordsman() -> Unit:
-	swordsman = swordsman_scene.instantiate()
-
-	swordsman.stamina = 6
-	swordsman.offset = Vector2(8, -20)
-	swordsman.board = self
-	swordsman.set_position_from_map(get_used_rect().size / 2)
-	swordsman.scale = Vector2(0.5, 0.5)
-	swordsman.z_index = 256
-
-	add_sibling.call_deferred(swordsman)
-
-	return swordsman
 
 
 func instantiate_highlight_tile(tile_type: HighlightTile) -> Sprite2D:
@@ -95,32 +79,28 @@ func _get_unit_at_map(map_pos: Vector2i) -> Unit:
 
 func _input(event: InputEvent) -> void:
 	if event is InputEventMouseMotion:
-		var mouse_map_position = get_mouse_map_position()
+		var pos = get_mouse_map_position()
+		if get_used_rect().has_point(pos):
+			emit_signal("tile_hovered", pos)
+	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+		var pos = get_mouse_map_position()
+		if get_used_rect().has_point(pos):
+			emit_signal("tile_clicked", pos)
 
-		if get_used_rect().has_point(mouse_map_position):
-			hover_cell(mouse_map_position)
-		else:
-			hover_tile.hide()
+func _on_tile_hovered(map_index: Vector2i) -> void:
+	hover_cell(map_index)
 
-	if event is InputEventMouseButton and event.is_pressed():
-		var mouse_map_position = get_mouse_map_position()
-
-		if event.button_index == MOUSE_BUTTON_LEFT:
-			if get_used_rect().has_point(mouse_map_position):
-				cell_clicked.emit(mouse_map_position)
-
-				if match.phase == Match.Phase.PLAY:
-					# Obsługa zaznaczenia jednostki do ruchu (tylko PLAY phase!)
-					var clicked_unit := _get_unit_at_map(mouse_map_position)
-					if clicked_unit and clicked_unit.player_id == match._get_current_player():
-						# Faza ruchu — zaznacz swoją jednostkę
-						swordsman = clicked_unit
-						on_focus_cell(mouse_map_position)
-					elif is_tile_focused:
-						# Spróbuj przenieść aktualnie zaznaczoną jednostkę
-						on_unfocus_cell(mouse_map_position, true)
-
-
+func _on_tile_clicked(map_index: Vector2i) -> void:
+	match phase_manager.get_current_phase():
+		PhaseManager.Phase.PLAY:
+			var clicked_unit := _get_unit_at_map(map_index)
+			if clicked_unit and clicked_unit.player_id == game_match._get_current_player():
+				swordsman = clicked_unit
+				on_focus_cell(map_index)
+			elif is_tile_focused:
+				on_unfocus_cell(map_index, true)
+		_:
+			game_match._on_board_cell_clicked(map_index)
 
 func get_cell_id(map_index: Vector2i) -> int:
 		var max_index = get_used_rect().size.max_axis_index()
