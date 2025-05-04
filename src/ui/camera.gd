@@ -14,6 +14,7 @@ enum CameraMoveController { KEYBOARD = 0b01, MOUSE = 0b10 }
 @export var min_zoom_factor := 1.0
 @export var max_zoom_factor := 6.0
 @export var zoom_step := 0.3
+@export var zoom_smooth_factor := 5.0
 
 var zoom_velocity := 0.0
 
@@ -31,19 +32,8 @@ func _process(delta: float) -> void:
 		direction = direction.normalized()
 		global_position += direction * move_speed * delta
 
-	# Zoom logic
-	if abs(zoom_velocity) > 0.001:
-		var factor = 1.0 + zoom_velocity * delta
-		var new_zoom = zoom * factor
-		zoom = new_zoom.clamp(Vector2.ONE * min_zoom_factor, Vector2.ONE * max_zoom_factor)
-		zoom_velocity = lerp(zoom_velocity, 0.0, 5 * delta)
+	zoom = get_camera_zoom(delta)
 
-func _unhandled_input(event: InputEvent) -> void:
-	if event is InputEventMouseButton and event.pressed:
-		if event.button_index == MOUSE_BUTTON_WHEEL_UP:
-			zoom_velocity += zoom_step
-		elif event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
-			zoom_velocity -= zoom_step
 
 func get_camera_movement(controller: int) -> Vector2:
 	const keyboard_mask = 0b01
@@ -110,4 +100,25 @@ func __get_camera_movement_mouse() -> Vector2:
 		direction.y += dy
 
 	return direction
-	
+
+
+func _input(event: InputEvent) -> void:
+	if event is InputEventMouseButton and event.pressed:
+		if event.button_index == MOUSE_BUTTON_WHEEL_UP:
+			zoom_velocity += zoom_step
+		elif event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
+			zoom_velocity -= zoom_step
+
+
+func get_camera_zoom(delta: float) -> Vector2:
+	var new_zoom := zoom
+
+	if abs(zoom_velocity) > 0.001:
+		var factor = 1.0 + zoom_velocity * delta
+		new_zoom = (zoom * factor).clamp(
+			Vector2.ONE * min_zoom_factor,
+			Vector2.ONE * max_zoom_factor
+		)
+		zoom_velocity = lerp(zoom_velocity, 0.0, zoom_smooth_factor * delta)
+
+	return new_zoom
