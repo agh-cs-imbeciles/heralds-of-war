@@ -19,11 +19,14 @@ var focus_tile: Sprite2D
 var movable_tiles: Array[Sprite2D] = []
 var swordsman: Unit
 
+signal cell_clicked(map_pos: Vector2i)
+@onready var match = get_parent() as Match
+
 
 func _ready() -> void:
 	init_path_finder()
 
-	instantiate_swordsman()
+	#instantiate_swordsman()
 	instantiate_highlight_tile(HighlightTile.HOVER)
 	instantiate_highlight_tile(HighlightTile.FOCUS)
 
@@ -84,6 +87,11 @@ func instantiate_highlight_tile(tile_type: HighlightTile) -> Sprite2D:
 
 	return tile
 
+func _get_unit_at_map(map_pos: Vector2i) -> Unit:
+	for child in get_parent().get_children():
+		if child is Unit and child.map_position == map_pos:
+			return child
+	return null
 
 func _input(event: InputEvent) -> void:
 	if event is InputEventMouseMotion:
@@ -98,15 +106,20 @@ func _input(event: InputEvent) -> void:
 		var mouse_map_position = get_mouse_map_position()
 
 		if event.button_index == MOUSE_BUTTON_LEFT:
-			if mouse_map_position == swordsman.map_position:
-				if not is_tile_focused:
-					on_focus_cell(mouse_map_position)
-			else:
-				if is_tile_focused:
-					on_unfocus_cell(mouse_map_position, true)
-		elif event.button_index == MOUSE_BUTTON_RIGHT:
-			if is_tile_focused:
-				on_unfocus_cell(mouse_map_position, false)
+			if get_used_rect().has_point(mouse_map_position):
+				cell_clicked.emit(mouse_map_position)
+
+				if match.phase == Match.Phase.PLAY:
+					# Obsługa zaznaczenia jednostki do ruchu (tylko PLAY phase!)
+					var clicked_unit := _get_unit_at_map(mouse_map_position)
+					if clicked_unit and clicked_unit.player_id == match._get_current_player():
+						# Faza ruchu — zaznacz swoją jednostkę
+						swordsman = clicked_unit
+						on_focus_cell(mouse_map_position)
+					elif is_tile_focused:
+						# Spróbuj przenieść aktualnie zaznaczoną jednostkę
+						on_unfocus_cell(mouse_map_position, true)
+
 
 
 func get_cell_id(map_index: Vector2i) -> int:
@@ -125,7 +138,10 @@ func get_mouse_map_position() -> Vector2i:
 
 func move_unit_if_legal(to: Vector2i) -> void:
 	if swordsman.can_move(to):
+		var from = swordsman.map_position
 		swordsman.move(to)
+		print("Player %s moved unit from %s to %s" % [swordsman.player_id, from, to])
+
 
 
 func on_focus_cell(map_index: Vector2i) -> void:

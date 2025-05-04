@@ -8,6 +8,7 @@ class_name Unit
 var map_position: Vector2i
 var board: Board
 
+@export var player_id: String = ""  # np. \"A\" lub \"B\"
 
 func can_move(map_index: Vector2i) -> bool:
 	var legal_moves = get_legal_moves(map_position)
@@ -40,3 +41,4 @@ func set_position_from_map(map: Vector2i) -> void:
 
 func move(to: Vector2i) -> void:
 	set_position_from_map(to)
+	get_parent().on_unit_moved()  # wymaga istnienia tej funkcji w Match
