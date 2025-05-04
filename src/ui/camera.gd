@@ -103,5 +103,4 @@ func _unhandled_input(event: InputEvent) -> void:
 		elif event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
 			new_zoom = zoom * (1.0 + ZOOM_STEP)
 
-		new_zoom = new_zoom.clamp(Vector2.ONE * MIN_ZOOM_FACTOR, Vector2.ONE * MAX_ZOOM_FACTOR)
-		zoom = new_zoom
+		zoom = new_zoom.clamp(Vector2.ONE * MIN_ZOOM_FACTOR, Vector2.ONE * MAX_ZOOM_FACTOR)
