@@ -1,7 +1,6 @@
-extends Node2D
-class_name Match
+class_name Match extends Node2D
 
-@export var match_name: String = "New Match"
+@export var match_name: String
 @export var units_per_player: int = 3
 
 var players := ["A", "B"]
@@ -68,15 +67,17 @@ func _handle_placement(map_pos: Vector2i) -> void:
 		pass
 	else:
 		current_player_index = (current_player_index + 1) % players.size()
-
-	var done = true
-	for p in players:
-		if placed_units[p].size() < units_per_player:
-			done = false
-	if done:
+	
+	if _is_placement_finished():
 		phase_manager.enter_phase(PhaseManager.Phase.ORDERING)
 	else:
 		print("Player %s to place remaining units." % players[current_player_index])
+
+func _is_placement_finished() -> bool:
+	for p in players:
+		if placed_units[p].size() < units_per_player:
+			return false
+	return true
 
 func start_ordering_phase() -> void:
 	print("== Ordering Phase ==")
