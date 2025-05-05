@@ -4,7 +4,7 @@
 [ext_resource type="Script" uid="uid://ctumvccgx6tl8" path="res://src/game/match.gd" id="1_dvtnx"]
 [ext_resource type="TileSet" uid="uid://xd0jqo1f7ya4" path="res://assets/resources/terrain_tileset.tres" id="3_dvtnx"]
 [ext_resource type="Script" uid="uid://c0mx0vvijq1vj" path="res://src/board/board.gd" id="3_g0v03"]
-[ext_resource type="Script" uid="uid://sfbj7vrmttf1" path="res://scenes/matches/phase_manager.gd" id="5_g0v03"]
+[ext_resource type="Script" uid="uid://sfbj7vrmttf1" path="res://src/game/phase_manager.gd" id="5_g0v03"]
 
 [node name="Match" type="Node2D"]
 script = ExtResource("1_dvtnx")
