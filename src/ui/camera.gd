@@ -9,6 +9,7 @@ enum CameraMoveController { KEYBOARD = 0b01, MOUSE = 0b10 }
 @export var move_by_keyboad := true
 @export_range(0, 100, 1) var edge_activation_threshold = 8
 @export_range(0, 2000, 10) var move_speed = 200
+@export var bound_offset := 16
 
 @export_group("Zoom")
 @export var min_zoom_factor := 1.0
@@ -17,6 +18,36 @@ enum CameraMoveController { KEYBOARD = 0b01, MOUSE = 0b10 }
 @export var zoom_smooth_factor := 5.0
 
 var zoom_velocity := 0.0
+var bound: Rect2i
+
+@onready var board: Board = $"../TerrainTileMap"
+
+
+func _ready() -> void:
+	var board_rect := board.get_used_rect()
+	var board_start_local := __to_local(board_rect.position)
+	var board_end_local := __to_local(board_rect.end - Vector2i.ONE)
+	var board_start_sec_diag_local := __to_local(
+		Vector2(board_rect.position.x, board_rect.end.y - 1)
+	)
+	var board_end_sec_diag_local := __to_local(
+		Vector2(board_rect.end.x - 1, board_rect.position.y)
+	)
+
+	var bound_start := Vector2i(
+			board_start_sec_diag_local.x,
+			board_start_local.y
+		) - bound_offset * Vector2i.ONE
+	var bound_end := Vector2i(
+			board_end_sec_diag_local.x,
+			board_end_local.y
+		) + bound_offset * Vector2i.ONE
+
+	bound = Rect2i(bound_start, bound_end - bound_start)
+
+
+func __to_local(pos: Vector2i) -> Vector2i:
+	return Vector2i(board.map_to_local(pos))
 
 func _process(delta: float) -> void:
 	var controller = 0
@@ -30,7 +61,8 @@ func _process(delta: float) -> void:
 	# Normalise and move
 	if direction != Vector2.ZERO:
 		direction = direction.normalized()
-		global_position += direction * move_speed * delta
+		global_position = (global_position + direction * move_speed * delta) \
+			.clamp(bound.position, bound.end)
 
 	zoom = get_camera_zoom(delta)
 
