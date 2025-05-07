@@ -20,7 +20,7 @@ enum CameraMoveController { KEYBOARD = 0b01, MOUSE = 0b10 }
 var zoom_velocity := 0.0
 var bound: Rect2i
 
-@onready var board: Board = $"../TerrainTileMap"
+@onready var board: Board = $"../Board"
 
 
 func _ready() -> void:
