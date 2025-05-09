@@ -28,7 +28,7 @@ func __handle_mouse_motion() -> void:
 	var mouse_map_position := __get_mouse_map_position()
 
 	if board.get_used_rect().has_point(mouse_map_position):
-		if mouse_map_position != mouse_entered_cell_position:
+		if mouse_map_position == mouse_entered_cell_position:
 			return
 		__on_mouse_entered_cell(mouse_map_position)
 	else:
