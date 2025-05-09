@@ -6,12 +6,17 @@ var cost: Dictionary = {}
 var swordsman: Unit
 var path_finder: AStar2D = AStar2D.new()
 
+@onready var input_manager: BoardInputManager = $"BoardInputManager"
+
 var swordsman_scene: PackedScene = preload("res://scenes/units/swordsman.tscn")
 
 
 func _ready() -> void:
 	load_board_cost()
 	init_path_finder()
+
+	input_manager.unit_unfocused.connect(__on_unit_unfocused)
+
 	instantiate_swordsman()
 
 
@@ -62,6 +67,11 @@ func instantiate_swordsman() -> Unit:
 	return swordsman
 
 
+func __on_unit_unfocused(cell_position: Vector2i, cancelled: bool) -> void:
+	if not cancelled and swordsman.can_move(cell_position):
+		swordsman.move(cell_position)
+
+
 func get_cell_cost(map_index: Vector2i) -> int:
 	var atlas_coords = get_cell_atlas_coords(map_index)
 	var coord_key = "%s,%s" % [atlas_coords.x, atlas_coords.y]
@@ -74,8 +84,3 @@ func get_cell_id(map_index: Vector2i) -> int:
 		var max_axis_value_power_10 = 10**ceili(log(max_axis_value) / log(10))
 
 		return max_axis_value_power_10 * map_index.x + map_index.y
-
-
-func move_unit_if_legal(to: Vector2i) -> void:
-	if swordsman.can_move(to):
-		swordsman.move(to)

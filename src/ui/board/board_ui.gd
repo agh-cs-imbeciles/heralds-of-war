@@ -8,14 +8,44 @@ var highlight_tile_scene: PackedScene = preload(
 	"res://scenes/board/highlight-tile.tscn"
 )
 
-var hover_tile: Sprite2D
-var focus_tile: Sprite2D
-var movable_tiles: Array[Sprite2D] = []
+var __hover_tile: Sprite2D
+var __focus_tile: Sprite2D
+var __movable_tiles: Array[Sprite2D] = []
 
 
 func _ready() -> void:
+	board.ready.connect(__on_board_ready)
+
 	__instantiate_highlight_tile(HighlightTile.HOVER)
 	__instantiate_highlight_tile(HighlightTile.FOCUS)
+
+
+func __on_board_ready() -> void:
+	board.input_manager.unit_focused.connect(__on_unit_focused)
+	board.input_manager.unit_unfocused.connect(__on_unit_unfocused)
+	board.input_manager.mouse_entered_cell.connect(__on_mouse_entered_cell)
+	board.input_manager.mouse_left_board.connect(__on_mouse_left_board)
+
+
+func __on_mouse_entered_cell(cell_position: Vector2i) -> void:
+	render_hover(board.map_to_local(cell_position))
+
+
+func __on_mouse_left_board() -> void:
+	unrender_hover()
+
+
+func __on_unit_focused(cell_position: Vector2i, moves: Array[Vector2i]) -> void:
+	render_focus(board.map_to_local(cell_position))
+
+	var moves_local: Array[Vector2]
+	moves_local.assign(moves.map(board.map_to_local))
+	render_movable_cells(moves_local)
+
+
+func __on_unit_unfocused(_cell_position: Vector2i, _cancelled: bool) -> void:
+	unrender_focus()
+	unrender_movable_cells()
 
 
 func __instantiate_highlight_tile(tile_type: HighlightTile) -> Sprite2D:
@@ -26,17 +56,17 @@ func __instantiate_highlight_tile(tile_type: HighlightTile) -> Sprite2D:
 			tile.name = "BoardHoverTile"
 			tile.modulate = Color("#aabfe6", 0.784)
 			tile.z_index = 64
-			hover_tile = tile
+			__hover_tile = tile
 		HighlightTile.FOCUS:
 			tile.name = "BoardFocusTile"
 			tile.modulate = Color("#2ed9e6", 0.784)
 			tile.z_index = 66
-			focus_tile = tile
+			__focus_tile = tile
 		HighlightTile.MOVABLE:
-			tile.name = "BoardMovableTile%s" % movable_tiles.size()
+			tile.name = "BoardMovableTile%s" % __movable_tiles.size()
 			tile.modulate = Color("#6dd4d6", 0.584)
 			tile.z_index = 65
-			movable_tiles.append(tile)
+			__movable_tiles.append(tile)
 
 	if tile_type != HighlightTile.MOVABLE:
 		tile.hide()
@@ -46,29 +76,33 @@ func __instantiate_highlight_tile(tile_type: HighlightTile) -> Sprite2D:
 	return tile
 
 
-func focus_cell(map_index: Vector2i) -> void:
-	focus_tile.position = board.map_to_local(map_index)
-	focus_tile.show()
+func render_hover(hover_position: Vector2) -> void:
+	if __hover_tile.hidden:
+		__hover_tile.show()
+	__hover_tile.position = hover_position
 
 
-func unfocus_cell() -> void:
-	focus_tile.hide()
+func unrender_hover() -> void:
+	__hover_tile.hide()
 
 
-func hover_cell(map_index: Vector2i) -> void:
-	if hover_tile.hidden:
-		hover_tile.show()
-	hover_tile.position = board.map_to_local(map_index)
+func render_focus(focus_position: Vector2) -> void:
+	__focus_tile.position = focus_position
+	__focus_tile.show()
 
 
-func render_movable_cells(legal_moves: Array[Vector2i]) -> void:
-	for cell in legal_moves:
+func unrender_focus() -> void:
+	__focus_tile.hide()
+
+
+func render_movable_cells(moves: Array[Vector2]) -> void:
+	for cell in moves:
 		var tile = __instantiate_highlight_tile(HighlightTile.MOVABLE)
-		tile.position = board.map_to_local(cell)
+		tile.position = cell
 
 
-func unrender_movable_tiles() -> void:
-	for cell in movable_tiles:
+func unrender_movable_cells() -> void:
+	for cell in __movable_tiles:
 		remove_child(cell)
 
-	movable_tiles.clear()
+	__movable_tiles.clear()
