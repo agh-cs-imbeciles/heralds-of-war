@@ -8,6 +8,7 @@ trim_trailing_whitespace = true
 indent_style = space
 
 [*.gd]
+indent_style = tab
 indent_size = 4
 
 [*.{json,tres,tscn,import}]
