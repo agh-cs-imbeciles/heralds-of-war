@@ -2,10 +2,10 @@
 
 [ext_resource type="Script" uid="uid://orar4yfbku55" path="res://src/ui/camera.gd" id="1_5vgm2"]
 [ext_resource type="Script" uid="uid://ctumvccgx6tl8" path="res://src/game/match.gd" id="1_dvtnx"]
-[ext_resource type="Script" uid="uid://b5lfouqrpasn3" path="res://src/ui/board/board_ui.gd" id="2_f4xsg"]
+[ext_resource type="Script" uid="uid://b5lfouqrpasn3" path="res://src/ui/game/board/board_ui.gd" id="2_f4xsg"]
 [ext_resource type="TileSet" uid="uid://xd0jqo1f7ya4" path="res://assets/resources/terrain_tileset.tres" id="3_dvtnx"]
-[ext_resource type="Script" uid="uid://c0mx0vvijq1vj" path="res://src/board/board.gd" id="3_g0v03"]
-[ext_resource type="Script" uid="uid://i3exemmdxb6d" path="res://src/board/board_input_manager.gd" id="6_u5ntg"]
+[ext_resource type="Script" uid="uid://c0mx0vvijq1vj" path="res://src/game/board/board.gd" id="3_g0v03"]
+[ext_resource type="Script" uid="uid://i3exemmdxb6d" path="res://src/game/board/board_input_manager.gd" id="6_u5ntg"]
 
 [node name="Match" type="Node2D"]
 script = ExtResource("1_dvtnx")
