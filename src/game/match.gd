@@ -2,10 +2,14 @@ class_name Match extends Node2D
 
 enum Phase { INIT = 0, PLACEMENT = 1, PLAY = 2 }
 
-@export var match_name: String
-@export var unit_count: int = 5
+signal turn_ended(turn: int)
 
+@export var match_name: String
+@export var unit_count_per_player: int = 3
+
+var players: Array[String] = ["A", "B"]
 var phase: Phase = Phase.INIT
+var turn: int = 1
 
 @onready var board: Board = $"Board"
 var phase_manager: MatchPhaseManager
@@ -25,3 +29,13 @@ func _ready() -> void:
 
 func __on_phase_changed(new_phase: Phase) -> void:
 	phase = new_phase
+
+
+func get_current_player() -> String:
+	return play_manager.ordering_manager.get_current_player()
+
+
+func end_turn() -> void:
+	print("Turn %d has been finished" % turn)
+	turn += 1
+	turn_ended.emit(turn)

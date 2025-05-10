@@ -1,9 +1,10 @@
 class_name MatchPlacementManager extends Object
 
-var player: String = "A"
+var __current_player_index: int = 0
 
 var __match: Match
 var __phase_manager: MatchPhaseManager
+var __players: Array[String]
 var __board: Board
 
 var swordsman_scene: PackedScene = preload("res://scenes/units/swordsman.tscn")
@@ -12,9 +13,11 @@ var swordsman_scene: PackedScene = preload("res://scenes/units/swordsman.tscn")
 func _init(m: Match) -> void:
 	__match = m
 	__phase_manager = m.phase_manager
+	__players = m.players
 	__board = m.board
 
-	__board.units[player] = []
+	for player in __players:
+		__board.units[player] = []
 
 	__phase_manager.phase_changed.connect(__on_phase_changed)
 
@@ -28,7 +31,10 @@ func __on_phase_changed(phase: Match.Phase) -> void:
 	__board.input_manager.cell_pressed.connect(__on_cell_pressed)
 
 	print("== Placement Phase ==")
-	print("Player to place %d units." % [__match.unit_count])
+	print("Player %s to place %d units." % [
+		__players[__current_player_index],
+		__match.unit_count_per_player
+	])
 
 
 func __on_cell_pressed(cell_position: Vector2i, button: MouseButton) -> void:
@@ -39,34 +45,45 @@ func __on_cell_pressed(cell_position: Vector2i, button: MouseButton) -> void:
 	if unit is Unit:
 		return
 
-	place_unit(cell_position)
+	var player := __players[__current_player_index]
 
-
-func place_unit(map_position: Vector2i) -> void:
-	if __board.units[player].size() >= __match.unit_count:
-		return
-
-	var swordsman := __instantiate_swordsman(map_position)
-	__board.add_unit(swordsman)
-
-	print("Player has placed unit at %s" % [map_position])
+	place_unit(player, cell_position)
 
 	if __is_placement_finished():
 		__phase_manager.enter_phase(Match.Phase.PLAY)
-	else:
-		print("Player has to place %s remaining units." % [
-			__match.unit_count - __board.units[player].size()
-		])
+		return
+
+	if __board.units[player].size() >= __match.unit_count_per_player:
+		__current_player_index = (__current_player_index + 1) % __players.size()
+
+	print("Player %s has to place %s remaining units." % [
+		player,
+		__match.unit_count_per_player - __board.units[player].size()
+	])
 
 
-func __instantiate_swordsman(map_position: Vector2i) -> Unit:
+func place_unit(player: String, map_position: Vector2i) -> void:
+	if __board.units[player].size() >= __match.unit_count_per_player:
+		return
+
+	var swordsman := __instantiate_swordsman(player, map_position)
+	__board.add_unit(swordsman)
+
+	print("Player %s has placed unit at %s" % [player, map_position])
+
+
+func __instantiate_swordsman(player: String, map_position: Vector2i) -> Unit:
 	var swordsman: Unit = swordsman_scene.instantiate()
 	swordsman.board = __match.board
 	swordsman.stamina = 60
+	swordsman.player = player
 	swordsman.offset = Vector2(8, -20)
 	swordsman.set_position_from_map(map_position)
 	swordsman.scale = Vector2(0.5, 0.5)
 	swordsman.z_index = 256
+	swordsman.modulate = Color(1, 0.8, 0.8) \
+		if player == "A" \
+		else Color(0.8, 0.8, 1)
 
 	__board.unit_node_container.add_child(swordsman)
 
@@ -74,4 +91,7 @@ func __instantiate_swordsman(map_position: Vector2i) -> Unit:
 
 
 func __is_placement_finished() -> bool:
-	return __board.units[player].size() >= __match.unit_count
+	for player in __players:
+		if __board.units[player].size() < __match.unit_count_per_player:
+			return false
+	return true
