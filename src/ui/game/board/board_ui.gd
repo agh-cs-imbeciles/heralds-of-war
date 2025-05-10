@@ -1,6 +1,7 @@
 class_name BoardUi extends Node2D
 
-@onready var board: Board = $"../../Board"
+@onready var __match: Match = $"../.."
+@onready var __board: Board = $"../../Board"
 
 enum HighlightTile { HOVER, FOCUS, MOVABLE }
 
@@ -14,36 +15,40 @@ var __movable_tiles: Array[Sprite2D] = []
 
 
 func _ready() -> void:
-	board.ready.connect(__on_board_ready)
+	__match.ready.connect(__on_match_ready)
+	__board.ready.connect(__on_board_ready)
 
 	__instantiate_highlight_tile(HighlightTile.HOVER)
 	__instantiate_highlight_tile(HighlightTile.FOCUS)
 
 
+func __on_match_ready() -> void:
+	__match.play_manager.unit_focused.connect(__on_unit_focused)
+	__match.play_manager.unit_unfocused.connect(__on_unit_unfocused)
+
+
 func __on_board_ready() -> void:
-	board.input_manager.unit_focused.connect(__on_unit_focused)
-	board.input_manager.unit_unfocused.connect(__on_unit_unfocused)
-	board.input_manager.mouse_entered_cell.connect(__on_mouse_entered_cell)
-	board.input_manager.mouse_left_board.connect(__on_mouse_left_board)
+	__board.input_manager.mouse_entered_cell.connect(__on_mouse_entered_cell)
+	__board.input_manager.mouse_left_board.connect(__on_mouse_left_board)
 
 
 func __on_mouse_entered_cell(cell_position: Vector2i) -> void:
-	render_hover(board.map_to_local(cell_position))
+	render_hover(__board.map_to_local(cell_position))
 
 
 func __on_mouse_left_board() -> void:
 	unrender_hover()
 
 
-func __on_unit_focused(cell_position: Vector2i, moves: Array[Vector2i]) -> void:
-	render_focus(board.map_to_local(cell_position))
+func __on_unit_focused(unit: Unit) -> void:
+	render_focus(__board.map_to_local(unit.map_position))
 
 	var moves_local: Array[Vector2]
-	moves_local.assign(moves.map(board.map_to_local))
+	moves_local.assign(unit.get_legal_moves().map(__board.map_to_local))
 	render_movable_cells(moves_local)
 
 
-func __on_unit_unfocused(_cell_position: Vector2i, _cancelled: bool) -> void:
+func __on_unit_unfocused() -> void:
 	unrender_focus()
 	unrender_movable_cells()
 

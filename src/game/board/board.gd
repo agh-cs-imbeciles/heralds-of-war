@@ -3,21 +3,16 @@ extends TileMapLayer
 class_name Board
 
 var cost: Dictionary = {}
-var swordsman: Unit
+var units: Dictionary = {}
 var path_finder: AStar2D = AStar2D.new()
 
 @onready var input_manager: BoardInputManager = $"BoardInputManager"
-
-var swordsman_scene: PackedScene = preload("res://scenes/units/swordsman.tscn")
+@onready var unit_node_container: Node = $"Units"
 
 
 func _ready() -> void:
 	load_board_cost()
 	init_path_finder()
-
-	input_manager.unit_unfocused.connect(__on_unit_unfocused)
-
-	instantiate_swordsman()
 
 
 func load_board_cost() -> void:
@@ -33,7 +28,7 @@ func load_board_cost() -> void:
 		if parsed_file[atlas_coords] != "inf":
 			continue
 
-		parsed_file[atlas_coords] = 9223372036854775807  # 2^63 - 1
+		parsed_file[atlas_coords] = 9007199254740991  # 2^53 - 1
 
 	cost = parsed_file
 
@@ -52,30 +47,10 @@ func init_path_finder() -> void:
 			path_finder.connect_points(i, j)
 
 
-func instantiate_swordsman() -> Unit:
-	swordsman = swordsman_scene.instantiate()
-
-	swordsman.stamina = 60
-	swordsman.offset = Vector2(8, -20)
-	swordsman.board = self
-	swordsman.set_position_from_map(get_used_rect().size / 2)
-	swordsman.scale = Vector2(0.5, 0.5)
-	swordsman.z_index = 256
-
-	add_sibling.call_deferred(swordsman)
-
-	return swordsman
-
-
-func __on_unit_unfocused(cell_position: Vector2i, cancelled: bool) -> void:
-	if not cancelled and swordsman.can_move(cell_position):
-		swordsman.move(cell_position)
-
-
 func get_cell_cost(map_index: Vector2i) -> int:
 	var atlas_coords = get_cell_atlas_coords(map_index)
 	var coord_key = "%s,%s" % [atlas_coords.x, atlas_coords.y]
-	return cost.get(coord_key, 9223372036854775807)
+	return cost.get(coord_key, 9007199254740991)
 
 
 func get_cell_id(map_index: Vector2i) -> int:
@@ -84,3 +59,30 @@ func get_cell_id(map_index: Vector2i) -> int:
 		var max_axis_value_power_10 = 10**ceili(log(max_axis_value) / log(10))
 
 		return max_axis_value_power_10 * map_index.x + map_index.y
+
+
+func get_unit(map_index: Vector2i) -> Unit:
+	var unit_container_children: Array[Unit]
+	unit_container_children.assign(unit_node_container.get_children())
+
+	for unit in unit_container_children:
+		if unit.map_position == map_index:
+			return unit
+	return null
+
+
+func add_unit(unit: Unit) -> void:
+	var player := "A"
+	unit.moved.connect(__on_unit_moved)
+	units[player].append(unit)
+	update_cell_cost(unit.map_position, 9007199254740991)
+
+
+func __on_unit_moved(unit: Unit, from: Vector2i) -> void:
+	update_cell_cost(from, get_cell_cost(from))
+	update_cell_cost(unit.map_position, 9007199254740991)
+
+
+func update_cell_cost(map_index: Vector2i, new_cost: float) -> void:
+	var i := get_cell_id(map_index)
+	path_finder.set_point_weight_scale(i, new_cost)

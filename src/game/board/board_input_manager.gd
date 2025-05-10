@@ -1,13 +1,11 @@
 class_name BoardInputManager extends Node
 
-signal unit_focused(cell_position: Vector2i, moves: Array[Vector2i])
-signal unit_unfocused(cell_position: Vector2i, cancelled: bool)
+signal cell_pressed(cell_position: Vector2i, button: MouseButton)
 signal mouse_entered_cell(cell_position: Vector2i)
 signal mouse_left_board
 
 @onready var board: Board = $".."
 
-var is_unit_focused: bool = false
 var mouse_entered_cell_position: Vector2i = Vector2i(-1, -1)
 
 
@@ -46,44 +44,13 @@ func __on_mouse_left_board() -> void:
 
 
 func __handle_mouse_button_pressed(event: InputEventMouseButton) -> void:
-	var mouse_map_position = __get_mouse_map_position()
+	var mouse_map_position := __get_mouse_map_position()
+	var button := event.button_index
 
-	if event.button_index == MOUSE_BUTTON_LEFT:
-		__on_left_mouse_button_pressed(mouse_map_position)
-	elif event.button_index == MOUSE_BUTTON_RIGHT:
-		__on_right_mouse_button_pressed(mouse_map_position)
-
-
-func __on_unit_focused(mouse_map_position: Vector2i) -> void:
-	is_unit_focused = true
-	var moves := board.swordsman.get_legal_moves()
-	unit_focused.emit(board.swordsman.map_position, moves)
-
-
-func __on_unit_unfocused(mouse_map_position: Vector2i, cancelled: bool) -> void:
-	is_unit_focused = false
-	unit_unfocused.emit(mouse_map_position, cancelled)
-
-
-func __on_left_mouse_button_pressed(mouse_map_position: Vector2i) -> void:
-	var is_unit_cell_pressed \
-		:= mouse_map_position == board.swordsman.map_position
-	var has_unit_been_focused := is_unit_cell_pressed and not is_unit_focused
-
-	if has_unit_been_focused:
-		__on_unit_focused(mouse_map_position)
-		return
-	if not is_unit_focused:
+	var is_valid_button_pressed := button == MOUSE_BUTTON_LEFT \
+		or button == MOUSE_BUTTON_RIGHT
+	var is_cell_pressed := board.get_used_rect().has_point(mouse_map_position)
+	if not (is_valid_button_pressed and is_cell_pressed):
 		return
 
-	var cancelled: bool
-	if is_unit_cell_pressed:
-		cancelled = true
-	else:
-		cancelled = false
-	__on_unit_unfocused(mouse_map_position, cancelled)
-
-
-func __on_right_mouse_button_pressed(mouse_map_position: Vector2i) -> void:
-	var cancelled := true
-	__on_unit_unfocused(mouse_map_position, cancelled)
+	cell_pressed.emit(mouse_map_position, button)

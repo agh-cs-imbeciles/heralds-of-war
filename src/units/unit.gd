@@ -2,6 +2,8 @@ extends CharacterBody2D
 
 class_name Unit
 
+signal moved(unit: Unit, from: Vector2i)
+
 @export_range(1, 1024) var stamina: int
 @export var offset: Vector2
 
@@ -27,7 +29,7 @@ func get_legal_moves() -> Array[Vector2i]:
 		var t = board.get_cell_id(cell)
 		var path = board.path_finder.get_point_path(s, t)
 
-		var path_cost = 0
+		var path_cost = -9007199254740991
 		for path_cell in path:
 			var u = board.get_cell_id(path_cell)
 			path_cost += board.path_finder.get_point_weight_scale(u)
@@ -44,4 +46,6 @@ func set_position_from_map(map: Vector2i) -> void:
 
 
 func move(to: Vector2i) -> void:
+	var map_position_before_move := map_position
 	set_position_from_map(to)
+	moved.emit(self, map_position_before_move)
