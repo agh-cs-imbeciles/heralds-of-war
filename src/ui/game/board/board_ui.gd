@@ -23,8 +23,13 @@ func _ready() -> void:
 
 
 func __on_match_ready() -> void:
+	__match.turn_ended.connect(__on_turn_ended)
+	__match.phase_manager.phase_changed.connect(__on_phase_changed)
 	__match.play_manager.unit_focused.connect(__on_unit_focused)
 	__match.play_manager.unit_unfocused.connect(__on_unit_unfocused)
+	__match.play_manager.ordering_manager.sequence_advanced.connect(
+		__on_sequence_advanced
+	)
 
 
 func __on_board_ready() -> void:
@@ -38,6 +43,21 @@ func __on_mouse_entered_cell(cell_position: Vector2i) -> void:
 
 func __on_mouse_left_board() -> void:
 	unrender_hover()
+
+
+func __on_turn_ended(_turn: int) -> void:
+	highlight_player_units(__match.get_current_player())
+
+
+func __on_phase_changed(phase: Match.Phase) -> void:
+	if phase != Match.Phase.PLAY:
+		return
+
+	highlight_player_units(__match.get_current_player())
+
+
+func __on_sequence_advanced(player: String) -> void:
+	highlight_player_units(player)
 
 
 func __on_unit_focused(unit: Unit) -> void:
@@ -111,3 +131,12 @@ func unrender_movable_cells() -> void:
 		remove_child(cell)
 
 	__movable_tiles.clear()
+
+
+func highlight_player_units(player: String) -> void:
+	var unit_container_children: Array[Unit]
+	unit_container_children.assign(__board.unit_node_container.get_children())
+
+	for unit in unit_container_children:
+		unit.modulate = Color(1, 1, 1) if unit.player == player \
+			else Color(0.4, 0.4, 0.4)

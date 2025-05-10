@@ -7,6 +7,7 @@ signal moved(unit: Unit, from: Vector2i)
 @export_range(1, 1024) var stamina: int
 @export var offset: Vector2
 
+var player: String
 var map_position: Vector2i
 var board: Board
 

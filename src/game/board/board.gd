@@ -72,9 +72,8 @@ func get_unit(map_index: Vector2i) -> Unit:
 
 
 func add_unit(unit: Unit) -> void:
-	var player := "A"
 	unit.moved.connect(__on_unit_moved)
-	units[player].append(unit)
+	units[unit.player].append(unit)
 	update_cell_cost(unit.map_position, 9007199254740991)
 
 
