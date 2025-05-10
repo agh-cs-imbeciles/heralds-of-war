@@ -56,7 +56,7 @@ func __handle_mouse_button_pressed(event: InputEvent) -> void:
 
 func __on_unit_focused(mouse_map_position: Vector2i) -> void:
 	is_unit_focused = true
-	var moves := board.swordsman.get_legal_moves(mouse_map_position)
+	var moves := board.swordsman.get_legal_moves()
 	unit_focused.emit(board.swordsman.map_position, moves)
 
 
