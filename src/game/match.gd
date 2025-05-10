@@ -15,7 +15,13 @@ var play_manager: MatchPlayManager
 
 func _ready() -> void:
 	phase_manager = MatchPhaseManager.new(self)
+	phase_manager.phase_changed.connect(__on_phase_changed)
+
 	placement_manager = MatchPlacementManager.new(self)
 	play_manager = MatchPlayManager.new(self)
 
 	phase_manager.enter_phase(Phase.PLACEMENT)
+
+
+func __on_phase_changed(new_phase: Phase) -> void:
+	phase = new_phase
