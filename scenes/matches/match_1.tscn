@@ -32,6 +32,8 @@ script = ExtResource("3_g0v03")
 script = ExtResource("6_u5ntg")
 metadata/_custom_type_script = "uid://i3exemmdxb6d"
 
+[node name="Units" type="Node" parent="Board"]
+
 [node name="BoardGridTileMap" type="TileMapLayer" parent="."]
 modulate = Color(0.23552, 0.24, 0.1728, 0.0627451)
 z_index = 128
