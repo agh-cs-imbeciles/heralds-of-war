@@ -45,7 +45,7 @@ func __on_mouse_left_board() -> void:
 	mouse_left_board.emit()
 
 
-func __handle_mouse_button_pressed(event: InputEvent) -> void:
+func __handle_mouse_button_pressed(event: InputEventMouseButton) -> void:
 	var mouse_map_position = __get_mouse_map_position()
 
 	if event.button_index == MOUSE_BUTTON_LEFT:
