@@ -82,10 +82,6 @@ func get_camera_movement(controller: int) -> Vector2:
 
 
 func __get_camera_movement_keyboard() -> Vector2:
-	var screen_size = get_viewport_rect().size
-	var mouse_pos = get_viewport().get_mouse_position()
-	var center = screen_size * 0.5
-
 	var direction = Vector2.ZERO
 
 	if Input.is_key_pressed(KEY_UP) or Input.is_key_pressed(KEY_W):
