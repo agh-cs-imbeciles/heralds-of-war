@@ -49,6 +49,7 @@ func _ready() -> void:
 func __to_local(pos: Vector2i) -> Vector2i:
 	return Vector2i(board.map_to_local(pos))
 
+
 func _process(delta: float) -> void:
 	var controller = 0
 	if move_by_mouse:
