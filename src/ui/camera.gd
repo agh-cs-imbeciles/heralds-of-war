@@ -68,14 +68,11 @@ func _process(delta: float) -> void:
 
 
 func get_camera_movement(controller: int) -> Vector2:
-	const keyboard_mask = 0b01
-	const mouse_mask = 0b10
-
 	var direction = Vector2.ZERO
 
-	if controller & keyboard_mask == CameraMoveController.KEYBOARD:
+	if controller & CameraMoveController.KEYBOARD:
 		direction += __get_camera_movement_keyboard()
-	if controller & mouse_mask == CameraMoveController.MOUSE:
+	if controller & CameraMoveController.MOUSE:
 		direction += __get_camera_movement_mouse()
 
 	return direction
