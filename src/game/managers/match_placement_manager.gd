@@ -75,21 +75,21 @@ func place_unit(player: String, map_position: Vector2i) -> void:
 func __instantiate_swordsman(player: String, map_position: Vector2i) -> Unit:
 	var swordsman: Unit = swordsman_scene.instantiate()
 	swordsman.board = __match.board
-	swordsman.start_stamina = 60
-	swordsman.start_health = 100
-	swordsman.start_attack_strength = 50
-	swordsman.start_attack_cost = 20
-	swordsman.start_defense_percent = 0
+	swordsman.initial_stamina = 60
+	swordsman.initial_health = 100
+	swordsman.initial_attack_strength = 50
+	swordsman.initial_attack_cost = 20
+	swordsman.initial_defense = 0
 	swordsman.player = player
 	swordsman.offset = Vector2(8, -20)
-	swordsman.start_map_position = map_position
+	swordsman.initial_position = map_position
 	swordsman.scale = Vector2(0.5, 0.5)
 	swordsman.z_index = 256
 	swordsman.modulate = Color(1, 0.8, 0.8) \
 		if player == "A" \
 		else Color(0.8, 0.8, 1)
 
-	swordsman.reset_to_intitial_state()
+	swordsman.init_stats()
 
 	__board.unit_node_container.add_child(swordsman)
 
