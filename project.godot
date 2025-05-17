@@ -15,6 +15,10 @@ run/main_scene="res://scenes/ui/menu/menu.tscn"
 config/features=PackedStringArray("4.4", "GL Compatibility")
 config/icon="res://assets/icons/icon.svg"
 
+[autoload]
+
+Global="*res://src/globals.gd"
+
 [rendering]
 
 textures/canvas_textures/default_texture_filter=0
