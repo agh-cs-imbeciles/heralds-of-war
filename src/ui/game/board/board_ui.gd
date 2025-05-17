@@ -3,7 +3,8 @@ class_name BoardUi extends Node2D
 @onready var __match: Match = $"../.."
 @onready var __board: Board = $"../../Board"
 
-enum HighlightTile { HOVER, FOCUS, MOVABLE }
+enum HighlightTile { HOVER, FOCUS, MOVE, ATTACK, ATTACK_MOVE }
+var UnitState = MatchPlayManager.UnitState
 
 var highlight_tile_scene: PackedScene = preload(
 	"res://scenes/board/highlight-tile.tscn"
@@ -11,7 +12,7 @@ var highlight_tile_scene: PackedScene = preload(
 
 var __hover_tile: Sprite2D
 var __focus_tile: Sprite2D
-var __movable_tiles: Array[Sprite2D] = []
+var __marked_tiles: Array[Sprite2D] = []
 
 
 func _ready() -> void:
@@ -60,12 +61,23 @@ func __on_sequence_advanced(player: String) -> void:
 	highlight_player_units(player)
 
 
-func __on_unit_focused(unit: Unit) -> void:
+func __on_unit_focused(unit: Unit, unit_state: MatchPlayManager.UnitState) -> void:
 	render_focus(__board.map_to_local(unit.map_position))
 
-	var moves_local: Array[Vector2]
-	moves_local.assign(unit.get_legal_moves().map(__board.map_to_local))
-	render_movable_cells(moves_local)
+	var marked_cells: Array[Vector2]
+	if unit_state == UnitState.SELECTED:
+		marked_cells.assign(unit.get_legal_moves().map(__board.map_to_local))
+		render_marked_cells(marked_cells)
+	elif unit_state == UnitState.ATTACK_SELECTED:
+		var attackable_cells = unit.get_attacks()
+		marked_cells.assign(attackable_cells.map(__board.map_to_local))
+		render_marked_cells(marked_cells, HighlightTile.ATTACK)
+
+		if is_instance_of(unit, MeleeUnit):
+			var move_attackable_cells: Array[Vector2i] = unit.get_attacks_after_move()
+			move_attackable_cells = move_attackable_cells.filter(func(x): return not attackable_cells.has(x))
+			marked_cells.assign(move_attackable_cells.map(__board.map_to_local))
+			render_marked_cells(marked_cells, HighlightTile.ATTACK_MOVE)
 
 
 func __on_unit_unfocused() -> void:
@@ -87,13 +99,23 @@ func __instantiate_highlight_tile(tile_type: HighlightTile) -> Sprite2D:
 			tile.modulate = Color("#2ed9e6", 0.784)
 			tile.z_index = 66
 			__focus_tile = tile
-		HighlightTile.MOVABLE:
-			tile.name = "BoardMovableTile%s" % __movable_tiles.size()
+		HighlightTile.MOVE:
+			tile.name = "BoardMovableTile%s" % __marked_tiles.size()
 			tile.modulate = Color("#6dd4d6", 0.584)
 			tile.z_index = 65
-			__movable_tiles.append(tile)
+			__marked_tiles.append(tile)
+		HighlightTile.ATTACK:
+			tile.name = "BoardAttackableTile%s" % __marked_tiles.size()
+			tile.modulate = Color("8f31e8", 0.584)
+			tile.z_index = 65
+			__marked_tiles.append(tile)
+		HighlightTile.ATTACK_MOVE:
+			tile.name = "BoardMoveAttackableTile%s" % __marked_tiles.size()
+			tile.modulate = Color("#611aa3", 0.584)
+			tile.z_index = 65
+			__marked_tiles.append(tile)
 
-	if tile_type != HighlightTile.MOVABLE:
+	if tile_type not in [HighlightTile.MOVE, HighlightTile.ATTACK, HighlightTile.ATTACK_MOVE]:
 		tile.hide()
 
 	add_child(tile)
@@ -120,17 +142,20 @@ func unrender_focus() -> void:
 	__focus_tile.hide()
 
 
-func render_movable_cells(moves: Array[Vector2]) -> void:
+func render_marked_cells(
+	moves: Array[Vector2],
+	tile_type: HighlightTile = HighlightTile.MOVE
+) -> void:
 	for cell in moves:
-		var tile = __instantiate_highlight_tile(HighlightTile.MOVABLE)
+		var tile := __instantiate_highlight_tile(tile_type)
 		tile.position = cell
 
 
 func unrender_movable_cells() -> void:
-	for cell in __movable_tiles:
+	for cell in __marked_tiles:
 		remove_child(cell)
 
-	__movable_tiles.clear()
+	__marked_tiles.clear()
 
 
 func highlight_player_units(player: String) -> void:

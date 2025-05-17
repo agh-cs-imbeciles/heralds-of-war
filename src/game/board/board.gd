@@ -85,3 +85,15 @@ func __on_unit_moved(unit: Unit, from: Vector2i) -> void:
 func update_cell_cost(map_index: Vector2i, new_cost: float) -> void:
 	var i := get_cell_id(map_index)
 	path_finder.set_point_weight_scale(i, new_cost)
+
+
+func get_nearest_cells(center: Vector2i, max_distance: int) -> Array[Vector2i]:
+	var square_cells: Array[Vector2i]
+
+	for i in range(-max_distance - 1, max_distance + 2):
+		for j in range(-max_distance - 1, max_distance + 2):
+			var cell := center + Vector2i(i, j)
+			if cell in get_used_cells():
+				square_cells.append(cell)
+
+	return square_cells

@@ -1,6 +1,6 @@
 [gd_scene load_steps=13 format=3 uid="uid://bxqxpso4ylcse"]
 
-[ext_resource type="Script" uid="uid://sojai5d60awo" path="res://src/units/unit.gd" id="1_8w6po"]
+[ext_resource type="Script" uid="uid://b7vyhs2qf8g8l" path="res://src/units/melee_unit.gd" id="1_8w6po"]
 [ext_resource type="Texture2D" uid="uid://0iqwd7stojc5" path="res://assets/sprites/units/hooded-knight-idle.png" id="1_giobj"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_giobj"]
@@ -72,8 +72,6 @@ height = 74.0
 
 [node name="Swordsman" type="CharacterBody2D"]
 script = ExtResource("1_8w6po")
-stamina = null
-offset = null
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_1ir3w")
