@@ -89,7 +89,7 @@ func __instantiate_swordsman(player: String, map_position: Vector2i) -> Unit:
 		if player == "A" \
 		else Color(0.8, 0.8, 1)
 
-	swordsman.init_stats()
+	swordsman.init()
 
 	__board.unit_node_container.add_child(swordsman)
 

@@ -50,7 +50,7 @@ func __on_cell_pressed(cell_position: Vector2i, button: MouseButton) -> void:
 		unfocus_unit()
 		return
 
-	# We are sure that in states *SELECTED* and *ATTACK_SELECTED* only input is `MOUSE_BUTTON_LEFT`
+	# We are sure that in states `SELECTED` and `ATTACK_SELECTED` only input is `MOUSE_BUTTON_LEFT`
 	match(current_unit_state):
 		UnitState.SELECTED:
 			if focused_unit.can_move(cell_position):
@@ -68,7 +68,6 @@ func __on_cell_pressed(cell_position: Vector2i, button: MouseButton) -> void:
 					focus_unit(unit, UnitState.SELECTED)
 				elif button == MOUSE_BUTTON_RIGHT:
 					focus_unit(unit, UnitState.ATTACK_SELECTED)
-
 
 
 func __on_sequence_exhausted() -> void:
@@ -106,4 +105,4 @@ func perform_unit_attack(attacking: Unit, attacked: Unit) -> void:
 		attacking.move(to_move)
 	attacking.attack()
 
-	attacked.recive_damage(attacking.attack_strength)
+	attacked.receive_damage(attacking.attack_strength)

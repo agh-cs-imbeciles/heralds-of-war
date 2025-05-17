@@ -69,14 +69,14 @@ func __on_unit_focused(unit: Unit, unit_state: MatchPlayManager.UnitState) -> vo
 		marked_cells.assign(unit.get_legal_moves().map(__board.map_to_local))
 		render_marked_cells(marked_cells)
 	elif unit_state == UnitState.ATTACK_SELECTED:
-		var attackable_fields = unit.get_attack_cells(unit.map_position)
-		marked_cells.assign(attackable_fields.map(__board.map_to_local))
+		var attackable_cells = unit.get_attacks()
+		marked_cells.assign(attackable_cells.map(__board.map_to_local))
 		render_marked_cells(marked_cells, HighlightTile.ATTACK)
 
 		if is_instance_of(unit, MeleeUnit):
-			var move_attackable_fields: Array[Vector2i] = unit.get_attacks_after_move()
-			move_attackable_fields = move_attackable_fields.filter(func(x): return not attackable_fields.has(x))
-			marked_cells.assign(move_attackable_fields.map(__board.map_to_local))
+			var move_attackable_cells: Array[Vector2i] = unit.get_attacks_after_move()
+			move_attackable_cells = move_attackable_cells.filter(func(x): return not attackable_cells.has(x))
+			marked_cells.assign(move_attackable_cells.map(__board.map_to_local))
 			render_marked_cells(marked_cells, HighlightTile.ATTACK_MOVE)
 
 

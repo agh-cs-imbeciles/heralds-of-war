@@ -51,7 +51,7 @@ func get_legal_moves() -> Array[Vector2i]:
 	for cell in board.get_used_cells():
 		var path_cost := get_move_cost(cell)
 
-		if path_cost > 1 and path_cost <= stamina:
+		if path_cost > 0 and path_cost <= stamina:
 			legal_moves.append(cell)
 
 	return legal_moves
@@ -75,7 +75,7 @@ func attack() -> void:
 	deplete_stamina(attack_cost)
 
 
-func recive_damage(enemy_attack_strength: int) -> void:
+func receive_damage(enemy_attack_strength: int) -> void:
 	health -= enemy_attack_strength * (100 - defense) / 100.0 as int
 	print("Unit at position %s has received damage" % map_position)
 	print("Current health: %s" % health)
@@ -89,17 +89,17 @@ func restore_stamina() -> void:
 	stamina = initial_stamina
 
 
-# abstract method
-func get_attack_cells(map_index: Vector2i) -> Array[Vector2i]:
+## @abstract
+func __get_attack_cells(map_index: Vector2i) -> Array[Vector2i]:
 	return []
 
 
-#abstract method
+## @abstract
 func can_attack(map_index: Vector2i) -> bool:
 	return false
 
 
-func init_stats() -> void:
+func init() -> void:
 	set_position_from_map(initial_position)
 	stamina = initial_stamina
 	health = initial_health
