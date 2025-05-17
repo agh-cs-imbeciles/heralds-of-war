@@ -51,7 +51,7 @@ func get_legal_moves() -> Array[Vector2i]:
 	for cell in board.get_used_cells():
 		var path_cost := get_move_cost(cell)
 
-		if path_cost > 0 and path_cost <= stamina:
+		if path_cost > 1 and path_cost <= stamina:
 			legal_moves.append(cell)
 
 	return legal_moves

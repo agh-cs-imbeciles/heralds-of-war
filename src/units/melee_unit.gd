@@ -22,7 +22,8 @@ func get_attacks_after_move() -> Array[Vector2i]:
 	return __get_attack_to_move_dict().keys()
 
 
-# Maps all unit's possible attack cells to position an unit should be standing on, to perform this attack.
+## Maps all unit's possible attack cells to position an unit should be standing 
+## on, to perform this attack.
 func __get_attack_to_move_dict() -> Dictionary[Vector2i, Vector2i]:
 	var attack_to_move: Dictionary[Vector2i, Vector2i] = {}
 	var attack_to_cost: Dictionary[Vector2i, int] = {}
