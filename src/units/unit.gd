@@ -37,7 +37,7 @@ func get_move_cost(to: Vector2i) -> int:
 	var t := board.get_cell_id(to)
 	var path := board.path_finder.get_point_path(s, t)
 
-	var path_cost := -9007199254740991
+	var path_cost := -16777215
 	for path_cell in path:
 		var u := board.get_cell_id(path_cell)
 		path_cost += board.path_finder.get_point_weight_scale(u) as int
@@ -51,7 +51,7 @@ func get_legal_moves() -> Array[Vector2i]:
 	for cell in board.get_used_cells():
 		var path_cost := get_move_cost(cell)
 
-		if path_cost > 1 and path_cost <= stamina:
+		if path_cost > 0.0 and path_cost <= stamina:
 			legal_moves.append(cell)
 
 	return legal_moves

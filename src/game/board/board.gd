@@ -28,7 +28,7 @@ func load_board_cost() -> void:
 		if parsed_file[atlas_coords] != "inf":
 			continue
 
-		parsed_file[atlas_coords] = 9007199254740991  # 2^53 - 1
+		parsed_file[atlas_coords] = 16777215  # 2^24 - 1
 
 	cost = parsed_file
 
@@ -50,7 +50,7 @@ func init_path_finder() -> void:
 func get_cell_cost(map_index: Vector2i) -> int:
 	var atlas_coords = get_cell_atlas_coords(map_index)
 	var coord_key = "%s,%s" % [atlas_coords.x, atlas_coords.y]
-	return cost.get(coord_key, 9007199254740991)
+	return cost.get(coord_key, 16777215)
 
 
 func get_cell_id(map_index: Vector2i) -> int:
@@ -74,12 +74,12 @@ func get_unit(map_index: Vector2i) -> Unit:
 func add_unit(unit: Unit) -> void:
 	unit.moved.connect(__on_unit_moved)
 	units[unit.player].append(unit)
-	update_cell_cost(unit.map_position, 9007199254740991)
+	update_cell_cost(unit.map_position, 16777215)
 
 
 func __on_unit_moved(unit: Unit, from: Vector2i) -> void:
 	update_cell_cost(from, get_cell_cost(from))
-	update_cell_cost(unit.map_position, 9007199254740991)
+	update_cell_cost(unit.map_position, 16777215)
 
 
 func update_cell_cost(map_index: Vector2i, new_cost: float) -> void:
