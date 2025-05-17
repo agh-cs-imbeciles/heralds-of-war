@@ -25,8 +25,8 @@ var board: Board
 func can_move(map_index: Vector2i) -> bool:
 	var legal_moves = get_legal_moves()
 
-	for move in legal_moves:
-		if map_index == move:
+	for legal_move in legal_moves:
+		if map_index == legal_move:
 			return true
 
 	return false
@@ -90,12 +90,12 @@ func restore_stamina() -> void:
 
 
 ## @abstract
-func __get_attack_cells(map_index: Vector2i) -> Array[Vector2i]:
+func __get_attack_cells(_map_index: Vector2i) -> Array[Vector2i]:
 	return []
 
 
 ## @abstract
-func can_attack(map_index: Vector2i) -> bool:
+func can_attack(_map_index: Vector2i) -> bool:
 	return false
 
 

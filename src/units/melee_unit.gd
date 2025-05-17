@@ -10,9 +10,7 @@ func __get_attack_cells(map_index: Vector2i) -> Array[Vector2i]:
 func get_attacks() -> Array[Vector2i]:
 	if stamina < attack_cost:
 		return []
-	else:
-		return __get_attack_cells(map_position)
-
+	return __get_attack_cells(map_position)
 
 func get_attack_move(attacked_position: Vector2i) -> Vector2i:
 	return __get_attack_to_move_dict()[attacked_position]
