@@ -143,7 +143,7 @@ func unrender_focus() -> void:
 
 
 func render_marked_cells(
-	moves: Array[Vector2], 
+	moves: Array[Vector2],
 	tile_type: HighlightTile = HighlightTile.MOVE
 ) -> void:
 	for cell in moves:

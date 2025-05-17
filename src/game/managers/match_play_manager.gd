@@ -98,7 +98,7 @@ func perform_unit_attack(attacking: Unit, attacked: Unit) -> void:
 		return
 	if not attacking.is_move_attackable(attacked_position):
 		return
-	
+
 	var to_move = attacking.get_attack_move(attacked_position)
 
 	if to_move != attacking.map_position:

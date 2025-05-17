@@ -66,7 +66,7 @@ func move(to: Vector2i) -> void:
 	var map_position_before_move := map_position
 	set_position_from_map(to)
 	moved.emit(self, map_position_before_move)
-	
+
 	var cost := get_move_cost(to)
 	deplete_stamina(cost)
 

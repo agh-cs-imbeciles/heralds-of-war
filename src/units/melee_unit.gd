@@ -36,7 +36,7 @@ func __get_attack_to_move_dict() -> Dictionary[Vector2i, Vector2i]:
 			if cost == null or current_cost < cost:
 				attack_to_cost.set(attack_cell, current_cost)
 				attack_to_move.set(attack_cell, legal_move)
-				
+
 	if not attack_cost > stamina:
 		for attack_cell in __get_attack_cells(map_position):
 			attack_to_move.set(attack_cell, map_position)
