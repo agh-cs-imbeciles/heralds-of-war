@@ -24,7 +24,15 @@ func _init(m: Match) -> void:
 
 
 func __on_turn_ended(_turn: int) -> void:
+	__restore_stamina()
 	ordering_manager.reset()
+
+
+func __restore_stamina() -> void:
+	var units := __match.board.units
+	for player in units:
+		for unit in units[player]:
+			unit.restore_stamina()
 
 
 func __on_phase_changed(phase: Match.Phase) -> void:
