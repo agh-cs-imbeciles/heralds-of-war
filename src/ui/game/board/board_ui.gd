@@ -3,7 +3,7 @@ class_name BoardUi extends Node2D
 @onready var __match: Match = $"../.."
 @onready var __board: Board = $"../../Board"
 
-enum HighlightTile { HOVER, FOCUS, MOVE, ATTACK, ATTACK_MOVE }
+enum HighlightTile { HOVER, FOCUS, MOVE, ATTACK, ATTACK_MOVE, COMMITTED_UNIT }
 var UnitState = MatchPlayManager.UnitState
 
 var highlight_tile_scene: PackedScene = preload(
@@ -12,15 +12,21 @@ var highlight_tile_scene: PackedScene = preload(
 
 var __hover_tile: Sprite2D
 var __focus_tile: Sprite2D
+var __commit_tile: Sprite2D
 var __marked_tiles: Array[Sprite2D] = []
+var __committed_unit: Unit = null
 
 
 func _ready() -> void:
+	SignalBus.unit_committed.connect(__on_unit_committed)
+	SignalBus.unit_uncomitted.connect(__on_unit_uncommitted)
+
 	__match.ready.connect(__on_match_ready)
 	__board.ready.connect(__on_board_ready)
 
 	__instantiate_highlight_tile(HighlightTile.HOVER)
 	__instantiate_highlight_tile(HighlightTile.FOCUS)
+	__instantiate_highlight_tile(HighlightTile.COMMITTED_UNIT)
 
 
 func __on_match_ready() -> void:
@@ -85,6 +91,22 @@ func __on_unit_unfocused() -> void:
 	unrender_movable_cells()
 
 
+func __on_unit_committed(unit: Unit) -> void:
+	__committed_unit = unit
+	__committed_unit.moved.connect(__on_committed_unit_moved)
+	__commit_tile.show()
+
+
+func __on_committed_unit_moved(__0, __1) -> void:
+	__commit_tile.position = __board.map_to_local(__committed_unit.map_position)
+
+
+func __on_unit_uncommitted() -> void:
+	__committed_unit.moved.disconnect(__on_committed_unit_moved)
+	__commit_tile.hide()
+	__committed_unit = null
+
+
 func __instantiate_highlight_tile(tile_type: HighlightTile) -> Sprite2D:
 	var tile: Sprite2D = highlight_tile_scene.instantiate()
 
@@ -114,8 +136,13 @@ func __instantiate_highlight_tile(tile_type: HighlightTile) -> Sprite2D:
 			tile.modulate = Color("#611aa3", 0.584)
 			tile.z_index = 65
 			__marked_tiles.append(tile)
+		HighlightTile.COMMITTED_UNIT:
+			tile.name = "BoardComittedUnit"
+			tile.modulate = Color("#eb0909", 0.584)
+			tile.z_index = 65
+			__commit_tile = tile
 
-	if tile_type not in [HighlightTile.MOVE, HighlightTile.ATTACK, HighlightTile.ATTACK_MOVE]:
+	if tile_type not in [HighlightTile.MOVE, HighlightTile.ATTACK, HighlightTile.ATTACK_MOVE, HighlightTile.COMMITTED_UNIT]:
 		tile.hide()
 
 	add_child(tile)
