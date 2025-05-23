@@ -2,6 +2,7 @@ class_name MatchPlayManager extends Object
 
 signal unit_focused(unit: Unit, unit_state: UnitState)
 signal unit_unfocused
+signal unit_slot_finished
 
 enum UnitState { UNSELECTED, SELECTED, ATTACK_SELECTED }
 
@@ -21,6 +22,8 @@ func _init(m: Match) -> void:
 	__match.turn_ended.connect(__on_turn_ended)
 	__match.phase_manager.phase_changed.connect(__on_phase_changed)
 	ordering_manager.sequence_exhausted.connect(__on_sequence_exhausted)
+	unit_slot_finished.connect(ordering_manager.__on_unit_slot_finished)
+	unit_focused.connect(ordering_manager.__on_unit_selected)
 
 
 func __on_turn_ended(_turn: int) -> void:
@@ -71,7 +74,8 @@ func __on_cell_pressed(cell_position: Vector2i, button: MouseButton) -> void:
 			unfocus_unit()
 		UnitState.UNSELECTED:
 			var unit := __board.get_unit(cell_position)
-			if unit  and __is_current_player_unit(unit):
+			if unit and __is_current_player_unit(unit) \
+				and ordering_manager.can_unit_perform_action(unit):
 				if button == MOUSE_BUTTON_LEFT:
 					focus_unit(unit, UnitState.SELECTED)
 				elif button == MOUSE_BUTTON_RIGHT:
@@ -114,3 +118,7 @@ func perform_unit_attack(attacking: Unit, attacked: Unit) -> void:
 	attacking.attack()
 
 	attacked.receive_damage(attacking.attack_strength)
+
+
+func finish_slot() -> void:
+	unit_slot_finished.emit()
