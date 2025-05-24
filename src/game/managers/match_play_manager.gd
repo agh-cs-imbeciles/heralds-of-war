@@ -24,8 +24,16 @@ func _init(m: Match) -> void:
 	__match.turn_ended.connect(__on_turn_ended)
 	__match.phase_manager.phase_changed.connect(__on_phase_changed)
 	ordering_manager.sequence_exhausted.connect(__on_sequence_exhausted)
-	unit_slot_finished.connect(ordering_manager.__on_unit_slot_finished)
-	unit_focused.connect(ordering_manager.__on_unit_selected)
+	
+	var units := __match.board.units
+	for player in units:
+		for unit in units[player]:
+			unit.action_performed.connect(__on_unit_performed_action)
+
+
+func __on_unit_performed_action(unit: Unit) -> void:
+	if unit.is_stamina_exhausted():
+		unit_slot_finished.emit()
 
 
 func __on_turn_ended(_turn: int) -> void:
@@ -77,7 +85,7 @@ func __on_cell_pressed(cell_position: Vector2i, button: MouseButton) -> void:
 		UnitState.UNSELECTED:
 			var unit := __board.get_unit(cell_position)
 			if unit and __is_current_player_unit(unit) \
-				and ordering_manager.can_unit_perform_action(unit):
+				and ordering_manager.can_unit_use_slot(unit):
 				if button == MOUSE_BUTTON_LEFT:
 					focus_unit(unit, UnitState.SELECTED)
 				elif button == MOUSE_BUTTON_RIGHT:

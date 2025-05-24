@@ -68,4 +68,5 @@ func is_enemy_in_attack_range() ->bool:
 		var unit = board.get_unit(cell)
 		if unit != null and unit.player != self.player:
 			return true
+
 	return false
