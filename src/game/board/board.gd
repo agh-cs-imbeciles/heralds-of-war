@@ -82,6 +82,11 @@ func __on_unit_moved(unit: Unit, from: Vector2i) -> void:
 	update_cell_cost(unit.map_position, Global.CELL_COST_INFINITY)
 
 
+func remove_unit(unit: Unit) -> void:
+	units[unit.player].erase(unit)
+	unit_node_container.remove_child(unit)
+
+
 func update_cell_cost(map_index: Vector2i, new_cost: float) -> void:
 	var i := get_cell_id(map_index)
 	path_finder.set_point_weight_scale(i, new_cost)

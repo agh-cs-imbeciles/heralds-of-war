@@ -3,6 +3,7 @@ extends CharacterBody2D
 class_name Unit
 
 signal moved(unit: Unit, from: Vector2i)
+signal died(unit: Unit)
 
 @export var offset: Vector2
 @export var initial_position: Vector2i
@@ -79,8 +80,18 @@ func attack() -> void:
 
 func receive_damage(enemy_attack_strength: int) -> void:
 	health -= enemy_attack_strength * (100 - defense) / 100.0 as int
+
 	print("Unit at position %s has received damage" % map_position)
-	print("Current health: %s" % health)
+
+	if health <= 0:
+		__on_died()
+	else:
+		print("Current health: %s" % health)
+
+
+func __on_died() -> void:
+	print("Died")
+	died.emit(self)
 
 
 func deplete_stamina(stamina_to_deplete: int) -> void:
