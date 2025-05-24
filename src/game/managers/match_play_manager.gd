@@ -8,6 +8,7 @@ enum UnitState { UNSELECTED, SELECTED, ATTACK_SELECTED }
 var __match: Match
 var __board: Board
 var ordering_manager: MatchOrderingManager
+var __players: Array[String]
 
 var focused_unit: Unit
 var current_unit_state: UnitState = UnitState.UNSELECTED
@@ -17,6 +18,7 @@ func _init(m: Match) -> void:
 	__match = m
 	__board = m.board
 	ordering_manager = MatchOrderingManager.new(m)
+	__players = m.players
 
 	__match.turn_ended.connect(__on_turn_ended)
 	__match.phase_manager.phase_changed.connect(__on_phase_changed)
@@ -41,7 +43,7 @@ func __on_phase_changed(phase: Match.Phase) -> void:
 			__board.input_manager.cell_pressed.disconnect(__on_cell_pressed)
 		return
 
-	__board.input_manager.cell_pressed.connect(__on_cell_pressed)
+	__init_signal_connections()
 
 	print("== Play Phase ==")
 
@@ -76,6 +78,18 @@ func __on_cell_pressed(cell_position: Vector2i, button: MouseButton) -> void:
 					focus_unit(unit, UnitState.SELECTED)
 				elif button == MOUSE_BUTTON_RIGHT:
 					focus_unit(unit, UnitState.ATTACK_SELECTED)
+
+
+func __init_signal_connections() -> void:
+	__board.input_manager.cell_pressed.connect(__on_cell_pressed)
+
+	for player in __players:
+		for unit in __board.units[player]:
+			unit.died.connect(__on_unit_died)
+
+
+func __on_unit_died(unit: Unit) -> void:
+	__board.remove_unit(unit)
 
 
 func __on_sequence_exhausted() -> void:
