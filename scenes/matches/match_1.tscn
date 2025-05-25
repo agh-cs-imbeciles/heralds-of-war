@@ -18,7 +18,7 @@ script = ExtResource("2_f4xsg")
 metadata/_custom_type_script = "uid://b5lfouqrpasn3"
 
 [node name="Camera2D" type="Camera2D" parent="."]
-position = Vector2(16, 160)
+position = Vector2(16, 168)
 zoom = Vector2(6, 6)
 script = ExtResource("1_5vgm2")
 move_by_mouse = false
