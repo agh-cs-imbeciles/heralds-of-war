@@ -147,7 +147,7 @@ func __instantiate_highlight_tile(tile_type: HighlightTile) -> Sprite2D:
 		HighlightTile.MOVE, 
 		HighlightTile.ATTACK, 
 		HighlightTile.ATTACK_MOVE, 
-		HighlightTile.COMMITTED_UNIT
+		HighlightTile.COMMITTED_UNIT,
 	]:
 		tile.hide()
 

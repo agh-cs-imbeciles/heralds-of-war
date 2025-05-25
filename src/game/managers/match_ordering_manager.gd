@@ -9,7 +9,6 @@ var sequence: Array[String] = []
 var sequence_index: int = 0
 var unit_sequence: Array[Unit] = []
 var committed_unit: Unit
-var potential_committed_unit: Unit
 
 var __match: Match
 var __board: Board
@@ -45,7 +44,6 @@ func init_sequence() -> void:
 	sequence_index = 0
 	unit_sequence.clear()
 	committed_unit = null
-	potential_committed_unit = null
 
 	print("Turn %d order: %s" % [__match.turn, sequence])
 	print("Sequence %d: Player %s to act" % [
@@ -62,36 +60,26 @@ func init_signal_connections() -> void:
 	for player in __players:
 		for unit in __board.units[player]:
 			unit.action_performed.connect(__on_unit_performed_action)
-			unit.stamina_exhausted.connect(__on_unit_slot_finished)
 
 
 func __on_unit_slot_finished(_unit: Unit) -> void:
 	advance()
 
 
-func __on_unit_performed_action(_unit: Unit) -> void:
-	if potential_committed_unit != null:
-		commit_potential_unit()
+func __on_unit_performed_action(unit: Unit) -> void:
+	committed_unit = unit
+	unit_committed.emit(committed_unit)
 
 
 func get_current_player() -> String:
 	return sequence[sequence_index]
 
 
-func __on_unit_selected(unit: Unit, _1: MatchPlayManager.UnitState) -> void:
+func __on_unit_selected(unit: Unit, _unit_state: MatchPlayManager.UnitState) -> void:
 	if unit.player != get_current_player():
 		return
 	if unit in unit_sequence:
 		return
-	
-	potential_committed_unit = unit
-
-
-func commit_potential_unit() -> void:
-	committed_unit = potential_committed_unit
-	unit_sequence.append(potential_committed_unit)
-	potential_committed_unit = null
-	unit_committed.emit(committed_unit)
 
 
 func advance() -> void:
@@ -99,7 +87,6 @@ func advance() -> void:
 
 	unit_uncomitted.emit(committed_unit)
 	committed_unit = null
-	potential_committed_unit = null
 	
 	if sequence_index >= sequence.size():
 		sequence_exhausted.emit()
@@ -112,9 +99,10 @@ func advance() -> void:
 	sequence_advanced.emit(player)
 
 
-func __was_unit_slot_finished(unit: Unit) -> bool:
-	return unit_sequence.slice(0, unit_sequence.size()-1).has(unit)
-
-
 func can_unit_use_slot(unit: Unit) -> bool:
-	return (committed_unit == null or committed_unit == unit) and not __was_unit_slot_finished(unit)
+	return (committed_unit == null or committed_unit == unit) \
+		and not __was_unit_slot_already_utilised(unit)
+
+
+func __was_unit_slot_already_utilised(unit: Unit) -> bool:
+	return unit_sequence.slice(0, unit_sequence.size() - 1).has(unit)

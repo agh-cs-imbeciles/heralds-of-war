@@ -62,10 +62,10 @@ func can_attack(map_index: Vector2i) -> bool:
 	return false
 
 
-func is_enemy_in_attack_range() ->bool:
-	var attack_cells = __get_attack_cells(map_position)
+func is_enemy_in_attack_range() -> bool:
+	var attack_cells := __get_attack_cells(map_position)
 	for cell in attack_cells:
-		var unit = board.get_unit(cell)
+		var unit := board.get_unit(cell)
 		if unit != null and unit.player != self.player:
 			return true
 

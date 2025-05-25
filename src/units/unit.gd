@@ -5,7 +5,6 @@ class_name Unit
 signal moved(unit: Unit, from: Vector2i)
 signal died(unit: Unit)
 signal action_performed(unit: Unit)
-signal stamina_exhausted(unit: Unit)
 
 @export var offset: Vector2
 @export var initial_position: Vector2i
@@ -71,16 +70,17 @@ func move(to: Vector2i) -> void:
 	var map_position_before_move := map_position
 	set_position_from_map(to)
 
-	action_performed.emit(self)
+	moved.emit(self, map_position_before_move)
 
 	deplete_stamina(cost)
 
-	moved.emit(self, map_position_before_move)
+	action_performed.emit(self)
 
 
 func attack() -> void:
-	action_performed.emit(self)
 	deplete_stamina(attack_cost)
+	action_performed.emit(self)
+
 
 
 func receive_damage(enemy_attack_strength: int) -> void:
@@ -101,8 +101,6 @@ func __on_died() -> void:
 
 func deplete_stamina(stamina_to_deplete: int) -> void:
 	stamina -= stamina_to_deplete
-	if not is_stamina_exhausted():
-		stamina_exhausted.emit(self)
 
 
 func restore_stamina() -> void:
@@ -125,8 +123,8 @@ func is_enemy_in_attack_range() -> bool:
 
 
 func is_stamina_exhausted() -> bool:
-	return (stamina >= attack_cost and is_enemy_in_attack_range()) \
-		or get_legal_moves().size() > 0
+	return (stamina < attack_cost or not is_enemy_in_attack_range()) \
+		and get_legal_moves().size() <= 1
 
 
 func init() -> void:
