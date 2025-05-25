@@ -7,12 +7,16 @@ enum HighlightTile { HOVER, FOCUS, MOVE, ATTACK, ATTACK_MOVE }
 var UnitState = MatchPlayManager.UnitState
 
 var highlight_tile_scene: PackedScene = preload(
-	"res://scenes/board/highlight-tile.tscn"
+	"res://scenes/ui/board/highlight-tile.tscn"
+)
+var player_unit_tile: PackedScene = preload(
+	"res://scenes/ui/board/player_unit_tile.tscn"
 )
 
 var __hover_tile: Sprite2D
 var __focus_tile: Sprite2D
 var __marked_tiles: Array[Sprite2D] = []
+var __player_unit_tiles: Dictionary[String, Sprite2D] = {}
 
 
 func _ready() -> void:
@@ -34,8 +38,24 @@ func __on_match_ready() -> void:
 
 
 func __on_board_ready() -> void:
+	__board.unit_added.connect(__on_unit_added)
 	__board.input_manager.mouse_entered_cell.connect(__on_mouse_entered_cell)
 	__board.input_manager.mouse_left_board.connect(__on_mouse_left_board)
+
+
+func __on_unit_added(unit: Unit) -> void:
+	unit.moved.connect(__on_unit_moved)
+	unit.died.connect(__on_unit_died)
+
+	add_player_unit_tile(unit)
+
+
+func __on_unit_moved(unit: Unit, from: Vector2i) -> void:
+	update_player_unit_tile(unit, from)
+
+
+func __on_unit_died(unit: Unit) -> void:
+	remove_player_unit_tile(unit)
 
 
 func __on_mouse_entered_cell(cell_position: Vector2i) -> void:
@@ -107,12 +127,12 @@ func __instantiate_highlight_tile(tile_type: HighlightTile) -> Sprite2D:
 		HighlightTile.ATTACK:
 			tile.name = "BoardAttackableTile%s" % __marked_tiles.size()
 			tile.modulate = Color("8f31e8", 0.584)
-			tile.z_index = 65
+			tile.z_index = 62
 			__marked_tiles.append(tile)
 		HighlightTile.ATTACK_MOVE:
 			tile.name = "BoardMoveAttackableTile%s" % __marked_tiles.size()
 			tile.modulate = Color("#611aa3", 0.584)
-			tile.z_index = 65
+			tile.z_index = 62
 			__marked_tiles.append(tile)
 
 	if tile_type not in [HighlightTile.MOVE, HighlightTile.ATTACK, HighlightTile.ATTACK_MOVE]:
@@ -165,3 +185,38 @@ func highlight_player_units(player: String) -> void:
 	for unit in unit_container_children:
 		unit.modulate = Color(1, 1, 1) if unit.player == player \
 			else Color(0.4, 0.4, 0.4)
+
+
+func add_player_unit_tile(unit: Unit) -> Sprite2D:
+	var tile: Sprite2D = player_unit_tile.instantiate()
+	tile.name = "PlayerUnitTile%s" % __player_unit_tiles.size()
+	tile.position = __board.map_to_local(unit.map_position)
+	tile.modulate = Color("#1ad9ff") if unit.player == "A" else Color("#ff1a57")
+	tile.z_index = 63
+
+	var map_position_key := VectorUtils.vector2i_to_string(unit.map_position)
+	__player_unit_tiles.set(map_position_key, tile)
+
+	add_child(tile)
+
+	return tile
+
+
+func update_player_unit_tile(unit: Unit, previous_position: Vector2i) -> void:
+	var map_position_key := VectorUtils.vector2i_to_string(unit.map_position)
+	var old_map_position_key := VectorUtils.vector2i_to_string(
+		previous_position
+	)
+	var tile: Sprite2D = __player_unit_tiles.get(old_map_position_key)
+
+	__player_unit_tiles.erase(old_map_position_key)
+	tile.position = __board.map_to_local(unit.map_position)
+	__player_unit_tiles.set(map_position_key, tile)
+
+
+func remove_player_unit_tile(unit: Unit) -> void:
+	var map_position_key := VectorUtils.vector2i_to_string(unit.map_position)
+	var tile: Sprite2D = __player_unit_tiles.get(map_position_key)
+
+	remove_child(tile)
+	__player_unit_tiles.erase(map_position_key)
