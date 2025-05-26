@@ -24,7 +24,6 @@ func _init(m: Match) -> void:
 
 func __on_match_ready() -> void:
 	__match.play_manager.unit_slot_finished.connect(__on_unit_slot_finished)
-	__match.play_manager.unit_focused.connect(__on_unit_selected)
 
 
 func init_sequence() -> void:
@@ -67,26 +66,22 @@ func __on_unit_slot_finished(_unit: Unit) -> void:
 
 
 func __on_unit_performed_action(unit: Unit) -> void:
-	committed_unit = unit
-	unit_committed.emit(committed_unit)
+	if committed_unit == null:
+		committed_unit = unit
+		unit_committed.emit(committed_unit)
 
 
 func get_current_player() -> String:
 	return sequence[sequence_index]
 
 
-func __on_unit_selected(unit: Unit, _unit_state: MatchPlayManager.UnitState) -> void:
-	if unit.player != get_current_player():
-		return
-	if unit in unit_sequence:
-		return
-
-
 func advance() -> void:
 	sequence_index += 1
 
-	unit_uncomitted.emit(committed_unit)
+	var tmp = committed_unit
 	committed_unit = null
+
+	unit_uncomitted.emit(tmp)
 	if sequence_index >= sequence.size():
 		sequence_exhausted.emit()
 		return

@@ -94,17 +94,17 @@ func __on_unit_unfocused() -> void:
 
 
 func __on_unit_committed(unit: Unit) -> void:
-	unit.action_performed.connect(__on_committed_unit_action_performed)
+	unit.moved.connect(__on_committed_unit_moved)
 	__commit_tile.position = __board.map_to_local(unit.map_position)
 	__commit_tile.show()
 
 
-func __on_committed_unit_action_performed(unit: Unit) -> void:
+func __on_committed_unit_moved(unit: Unit, _from: Vector2i) -> void:
 	__commit_tile.position = __board.map_to_local(unit.map_position)
 
 
 func __on_unit_uncommitted(unit: Unit) -> void:
-	unit.action_performed.disconnect(__on_committed_unit_action_performed)
+	unit.moved.disconnect(__on_committed_unit_moved)
 	__commit_tile.hide()
 
 
