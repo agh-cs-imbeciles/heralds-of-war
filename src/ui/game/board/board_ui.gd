@@ -36,7 +36,7 @@ func __on_match_ready() -> void:
 	__match.play_manager.ordering_manager.unit_committed.connect(
 		__on_unit_committed
 	)
-	__match.play_manager.ordering_manager.unit_uncomitted.connect(
+	__match.play_manager.ordering_manager.unit_uncommitted.connect(
 		__on_unit_uncommitted
 	)
 

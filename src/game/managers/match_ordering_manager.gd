@@ -3,7 +3,7 @@ class_name MatchOrderingManager extends Object
 signal sequence_advanced(player: String)
 signal sequence_exhausted
 signal unit_committed(unit: Unit)
-signal unit_uncomitted(unit: Unit)
+signal unit_uncommitted(unit: Unit)
 
 var sequence: Array[String] = []
 var sequence_index: int = 0
@@ -69,7 +69,7 @@ func __on_unit_slot_finished(_unit: Unit) -> void:
 func uncommit_unit() -> void:
 	var uncommitted_unit := committed_unit
 	committed_unit = null
-	unit_uncomitted.emit(uncommitted_unit)
+	unit_uncommitted.emit(uncommitted_unit)
 	
 
 func __on_unit_performed_action(unit: Unit) -> void:
