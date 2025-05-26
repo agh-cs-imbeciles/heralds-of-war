@@ -104,7 +104,8 @@ func __on_committed_unit_moved(unit: Unit, _from: Vector2i) -> void:
 
 
 func __on_unit_uncommitted(unit: Unit) -> void:
-	unit.moved.disconnect(__on_committed_unit_moved)
+	if unit != null:
+		unit.moved.disconnect(__on_committed_unit_moved)
 	__commit_tile.hide()
 
 

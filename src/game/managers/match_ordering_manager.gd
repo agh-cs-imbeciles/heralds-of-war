@@ -63,11 +63,19 @@ func init_signal_connections() -> void:
 
 func __on_unit_slot_finished(_unit: Unit) -> void:
 	advance()
+	uncommit_unit()
 
+
+func uncommit_unit() -> void:
+	var uncommitted_unit := committed_unit
+	committed_unit = null
+	unit_uncomitted.emit(uncommitted_unit)
+	
 
 func __on_unit_performed_action(unit: Unit) -> void:
 	if committed_unit == null:
 		committed_unit = unit
+		unit_sequence.append(unit)
 		unit_committed.emit(committed_unit)
 
 
@@ -78,10 +86,6 @@ func get_current_player() -> String:
 func advance() -> void:
 	sequence_index += 1
 
-	var tmp = committed_unit
-	committed_unit = null
-
-	unit_uncomitted.emit(tmp)
 	if sequence_index >= sequence.size():
 		sequence_exhausted.emit()
 		return
@@ -91,6 +95,11 @@ func advance() -> void:
 	print("Sequence %d: Player %s to act" % [sequence_index + 1, player])
 
 	sequence_advanced.emit(player)
+
+	for unit in __board.units[player]:
+		if not __was_unit_slot_already_utilised(unit):
+			return
+	advance()
 
 
 func can_unit_use_slot(unit: Unit) -> bool:
