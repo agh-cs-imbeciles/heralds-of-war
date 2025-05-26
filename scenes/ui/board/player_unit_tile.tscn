@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3 uid="uid://bqhtvvpipcu40"]
+
+[ext_resource type="Texture2D" uid="uid://cn1pc7vuyyn86" path="res://assets/sprites/terrain/tileset.png" id="1_5p3et"]
+
+[node name="PlayerUnitTile" type="Sprite2D"]
+texture = ExtResource("1_5p3et")
+region_enabled = true
+region_rect = Rect2(64, 352, 32, 32)

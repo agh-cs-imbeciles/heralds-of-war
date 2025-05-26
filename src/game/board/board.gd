@@ -2,6 +2,8 @@ extends TileMapLayer
 
 class_name Board
 
+signal unit_added(unit: Unit)
+
 var cost: Dictionary = {}
 var units: Dictionary = {}
 var path_finder: AStar2D = AStar2D.new()
@@ -49,7 +51,7 @@ func init_path_finder() -> void:
 
 func get_cell_cost(map_index: Vector2i) -> int:
 	var atlas_coords = get_cell_atlas_coords(map_index)
-	var coord_key = "%s,%s" % [atlas_coords.x, atlas_coords.y]
+	var coord_key = VectorUtils.vector2i_to_string(atlas_coords)
 	return cost.get(coord_key, Global.CELL_COST_INFINITY)
 
 
@@ -75,6 +77,8 @@ func add_unit(unit: Unit) -> void:
 	unit.moved.connect(__on_unit_moved)
 	units[unit.player].append(unit)
 	update_cell_cost(unit.map_position, Global.CELL_COST_INFINITY)
+
+	unit_added.emit(unit)
 
 
 func __on_unit_moved(unit: Unit, from: Vector2i) -> void:
