@@ -87,7 +87,6 @@ func advance() -> void:
 
 	unit_uncomitted.emit(committed_unit)
 	committed_unit = null
-	
 	if sequence_index >= sequence.size():
 		sequence_exhausted.emit()
 		return

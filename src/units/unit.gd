@@ -124,7 +124,7 @@ func is_enemy_in_attack_range() -> bool:
 
 func is_stamina_exhausted() -> bool:
 	return (stamina < attack_cost or not is_enemy_in_attack_range()) \
-		and get_legal_moves().size() <= 1
+		and get_legal_moves().size() == 0
 
 
 func init() -> void:

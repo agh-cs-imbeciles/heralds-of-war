@@ -144,10 +144,9 @@ func __instantiate_highlight_tile(tile_type: HighlightTile) -> Sprite2D:
 			__commit_tile = tile
 
 	if tile_type not in [
-		HighlightTile.MOVE, 
-		HighlightTile.ATTACK, 
-		HighlightTile.ATTACK_MOVE, 
-		HighlightTile.COMMITTED_UNIT,
+		HighlightTile.MOVE,
+		HighlightTile.ATTACK,
+		HighlightTile.ATTACK_MOVE,
 	]:
 		tile.hide()
 
