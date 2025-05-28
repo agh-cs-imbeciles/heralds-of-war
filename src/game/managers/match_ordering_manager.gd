@@ -5,6 +5,7 @@ signal sequence_exhausted
 signal unit_committed(unit: Unit)
 signal unit_uncommitted(unit: Unit)
 
+var player_unit_count_at_last_advance: Dictionary[String, int] = {}
 var sequence: Array[String] = []
 var sequence_index: int = 0
 var unit_sequence: Array[Unit] = []
@@ -27,11 +28,10 @@ func __on_match_ready() -> void:
 
 
 func init_sequence() -> void:
-	var total_unit_count := 0
-	var player_slot_count_to_fill: Dictionary[String, int] = {}
-	for player in __players:
-		total_unit_count += __board.units[player].size()
-		player_slot_count_to_fill[player] = __board.units[player].size()
+	var total_unit_count := __board.get_total_unit_count()
+	player_unit_count_at_last_advance = __board.get_player_unit_count()
+	var player_slot_count_to_fill := player_unit_count_at_last_advance \
+		.duplicate()
 
 	sequence.clear()
 	while sequence.size() < total_unit_count:
@@ -62,21 +62,43 @@ func init_signal_connections() -> void:
 
 
 func __on_unit_slot_finished(_unit: Unit) -> void:
+	readjust_sequence()
 	advance()
 	uncommit_unit()
+
+
+func commit_unit(unit: Unit) -> void:
+	committed_unit = unit
+	unit_sequence.append(unit)
+	unit_committed.emit(committed_unit)
 
 
 func uncommit_unit() -> void:
 	var uncommitted_unit := committed_unit
 	committed_unit = null
 	unit_uncommitted.emit(uncommitted_unit)
-	
+
+
+func readjust_sequence() -> void:
+	var current_player_unit_count := __board.get_player_unit_count()
+	var player_slot_count_to_remove: Dictionary[String, int] = {}
+	for player in __players:
+		var current_ucnt := current_player_unit_count[player]
+		var last_advance_ucnt := player_unit_count_at_last_advance[player]
+		player_slot_count_to_remove[player] = last_advance_ucnt - current_ucnt
+
+	for player in __players:
+		while player_slot_count_to_remove[player] > 0:
+			var i := sequence.rfind(player)
+			sequence.remove_at(i)
+			player_slot_count_to_remove[player] -= 1
+
 
 func __on_unit_performed_action(unit: Unit) -> void:
 	if committed_unit == null:
-		committed_unit = unit
-		unit_sequence.append(unit)
-		unit_committed.emit(committed_unit)
+		commit_unit(unit)
+	if unit.is_stamina_exhausted():
+		__match.play_manager.unit_slot_finished.emit(unit)
 
 
 func get_current_player() -> String:
@@ -96,10 +118,7 @@ func advance() -> void:
 
 	sequence_advanced.emit(player)
 
-	for unit in __board.units[player]:
-		if not __was_unit_slot_already_utilised(unit):
-			return
-	advance()
+	player_unit_count_at_last_advance = __board.get_player_unit_count()
 
 
 func can_unit_use_slot(unit: Unit) -> bool:

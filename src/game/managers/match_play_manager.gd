@@ -26,11 +26,6 @@ func _init(m: Match) -> void:
 	ordering_manager.sequence_exhausted.connect(__on_sequence_exhausted)
 
 
-func __on_unit_performed_action(unit: Unit) -> void:
-	if unit.is_stamina_exhausted():
-		unit_slot_finished.emit(unit)
-
-
 func __on_turn_ended(_turn: int) -> void:
 	__restore_stamina()
 	ordering_manager.reset()
@@ -56,11 +51,6 @@ func __on_phase_changed(phase: Match.Phase) -> void:
 	if __match.turn == 1:
 		ordering_manager.init_signal_connections()
 	ordering_manager.init_sequence()
-
-	var units := __match.board.units
-	for player in units:
-		for unit in units[player]:
-			unit.action_performed.connect(__on_unit_performed_action)
 
 
 func __on_cell_pressed(cell_position: Vector2i, button: MouseButton) -> void:
