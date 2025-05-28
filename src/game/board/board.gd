@@ -4,8 +4,8 @@ class_name Board
 
 signal unit_added(unit: Unit)
 
-var cost: Dictionary = {}
-var units: Dictionary = {}
+var cost: Dictionary[String, int] = {}
+var units: Dictionary[String, Variant] = {}
 var path_finder: AStar2D = AStar2D.new()
 
 @onready var input_manager: BoardInputManager = $"BoardInputManager"
@@ -22,7 +22,8 @@ func load_board_cost() -> void:
 		"res://assets/resources/board_cost.json",
 		FileAccess.READ
 	)
-	var parsed_file = JSON.parse_string(file.get_as_text())
+	var parsed_file: Dictionary[String, Variant]
+	parsed_file.assign(JSON.parse_string(file.get_as_text()))
 
 	for atlas_coords in parsed_file:
 		if typeof(parsed_file[atlas_coords]) != TYPE_STRING:
@@ -32,7 +33,7 @@ func load_board_cost() -> void:
 
 		parsed_file[atlas_coords] = Global.CELL_COST_INFINITY
 
-	cost = parsed_file
+	cost.assign(parsed_file)
 
 
 func init_path_finder() -> void:
