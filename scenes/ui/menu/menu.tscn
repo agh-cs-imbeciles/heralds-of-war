@@ -41,7 +41,6 @@ theme = ExtResource("2_r4xos")
 text = "EXIT GAME"
 script = ExtResource("3_ldhvw")
 
-[connection signal="pressed" from="AspectRatioContainer/VBoxContainer/StartGameButton" to="AspectRatioContainer/VBoxContainer/StartGameButton" method="__change_scene"]
 [connection signal="resized" from="AspectRatioContainer/VBoxContainer/StartGameButton" to="AspectRatioContainer/VBoxContainer/StartGameButton" method="__resize_font"]
 [connection signal="pressed" from="AspectRatioContainer/VBoxContainer/ExitGameButton" to="AspectRatioContainer/VBoxContainer/ExitGameButton" method="__exit_game"]
 [connection signal="resized" from="AspectRatioContainer/VBoxContainer/ExitGameButton" to="AspectRatioContainer/VBoxContainer/ExitGameButton" method="__resize_font"]
