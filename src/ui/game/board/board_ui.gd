@@ -2,6 +2,7 @@ class_name BoardUi extends Node2D
 
 @onready var __match: Match = $"../.."
 @onready var __board: Board = $"../../Board"
+@onready var __team_parts_tiles: TileMapLayer = $"../../TeamMapParts"
 
 enum HighlightTile { HOVER, FOCUS, MOVE, ATTACK, ATTACK_MOVE, COMMITTED_UNIT }
 var UnitState = MatchPlayManager.UnitState
@@ -79,6 +80,12 @@ func __on_turn_ended(_turn: int) -> void:
 
 
 func __on_phase_changed(phase: Match.Phase) -> void:
+	match (phase):
+		Match.Phase.PLACEMENT:
+			__team_parts_tiles.show()
+		Match.Phase.PLAY:
+			__team_parts_tiles.hide()
+	
 	if phase != Match.Phase.PLAY:
 		return
 

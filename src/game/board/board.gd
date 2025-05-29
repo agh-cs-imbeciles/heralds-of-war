@@ -9,6 +9,7 @@ var units: Dictionary[String, Variant] = {}
 var path_finder: AStar2D = AStar2D.new()
 
 @onready var input_manager: BoardInputManager = $"BoardInputManager"
+@onready var team_parts_tiles: TileMapLayer = $"../TeamMapParts"
 @onready var unit_node_container: Node = $"Units"
 
 
@@ -124,3 +125,10 @@ func get_nearest_cells(center: Vector2i, max_distance: int) -> Array[Vector2i]:
 				square_cells.append(cell)
 
 	return square_cells
+
+
+func get_tile_team_affiliation(map_index: Vector2i) -> String:
+	var tile_data := team_parts_tiles.get_cell_tile_data(map_index)
+	if tile_data == null:
+		return "null"
+	return tile_data.get_custom_data("Team")

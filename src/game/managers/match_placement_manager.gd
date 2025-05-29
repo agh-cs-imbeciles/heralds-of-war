@@ -47,6 +47,10 @@ func __on_cell_pressed(cell_position: Vector2i, button: MouseButton) -> void:
 
 	var player := __players[__current_player_index]
 
+	if __board.get_tile_team_affiliation(cell_position) != player:
+		print("Player %s cannot place a unit at %s." % [player, cell_position])
+		return
+
 	place_unit(player, cell_position)
 
 	if __is_placement_finished():
