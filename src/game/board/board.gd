@@ -90,6 +90,7 @@ func __on_unit_moved(unit: Unit, from: Vector2i) -> void:
 func remove_unit(unit: Unit) -> void:
 	units[unit.player].erase(unit)
 	unit_node_container.remove_child(unit)
+	update_cell_cost(unit.map_position, get_cell_cost(unit.map_position))
 
 
 func update_cell_cost(map_index: Vector2i, new_cost: float) -> void:
