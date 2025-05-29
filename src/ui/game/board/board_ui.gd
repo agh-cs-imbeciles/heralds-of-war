@@ -3,7 +3,7 @@ class_name BoardUi extends Node2D
 @onready var __match: Match = $"../.."
 @onready var __board: Board = $"../../Board"
 
-enum HighlightTile { HOVER, FOCUS, MOVE, ATTACK, ATTACK_MOVE }
+enum HighlightTile { HOVER, FOCUS, MOVE, ATTACK, ATTACK_MOVE, COMMITTED_UNIT }
 var UnitState = MatchPlayManager.UnitState
 
 var highlight_tile_scene: PackedScene = preload(
@@ -15,6 +15,7 @@ var player_unit_tile: PackedScene = preload(
 
 var __hover_tile: Sprite2D
 var __focus_tile: Sprite2D
+var __commit_tile: Sprite2D
 var __marked_tiles: Array[Sprite2D] = []
 var __player_unit_tiles: Dictionary[String, Sprite2D] = {}
 
@@ -25,6 +26,7 @@ func _ready() -> void:
 
 	__instantiate_highlight_tile(HighlightTile.HOVER)
 	__instantiate_highlight_tile(HighlightTile.FOCUS)
+	__instantiate_highlight_tile(HighlightTile.COMMITTED_UNIT)
 
 
 func __on_match_ready() -> void:
@@ -34,6 +36,12 @@ func __on_match_ready() -> void:
 	__match.play_manager.unit_unfocused.connect(__on_unit_unfocused)
 	__match.play_manager.ordering_manager.sequence_advanced.connect(
 		__on_sequence_advanced
+	)
+	__match.play_manager.ordering_manager.unit_committed.connect(
+		__on_unit_committed
+	)
+	__match.play_manager.ordering_manager.unit_uncommitted.connect(
+		__on_unit_uncommitted
 	)
 
 
@@ -105,6 +113,22 @@ func __on_unit_unfocused() -> void:
 	unrender_movable_cells()
 
 
+func __on_unit_committed(unit: Unit) -> void:
+	unit.moved.connect(__on_committed_unit_moved)
+	__commit_tile.position = __board.map_to_local(unit.map_position)
+	__commit_tile.show()
+
+
+func __on_committed_unit_moved(unit: Unit, _from: Vector2i) -> void:
+	__commit_tile.position = __board.map_to_local(unit.map_position)
+
+
+func __on_unit_uncommitted(unit: Unit) -> void:
+	if unit != null:
+		unit.moved.disconnect(__on_committed_unit_moved)
+	__commit_tile.hide()
+
+
 func __instantiate_highlight_tile(tile_type: HighlightTile) -> Sprite2D:
 	var tile: Sprite2D = highlight_tile_scene.instantiate()
 
@@ -134,8 +158,17 @@ func __instantiate_highlight_tile(tile_type: HighlightTile) -> Sprite2D:
 			tile.modulate = Color("#611aa3", 0.584)
 			tile.z_index = 62
 			__marked_tiles.append(tile)
+		HighlightTile.COMMITTED_UNIT:
+			tile.name = "BoardComittedUnit"
+			tile.modulate = Color("#eb0909", 0.584)
+			tile.z_index = 65
+			__commit_tile = tile
 
-	if tile_type not in [HighlightTile.MOVE, HighlightTile.ATTACK, HighlightTile.ATTACK_MOVE]:
+	if tile_type not in [
+		HighlightTile.MOVE,
+		HighlightTile.ATTACK,
+		HighlightTile.ATTACK_MOVE,
+	]:
 		tile.hide()
 
 	add_child(tile)

@@ -93,6 +93,22 @@ func remove_unit(unit: Unit) -> void:
 	update_cell_cost(unit.map_position, get_cell_cost(unit.map_position))
 
 
+func get_total_unit_count() -> int:
+	var total_unit_count := 0
+	for player in units:
+		total_unit_count += units[player].size()
+
+	return total_unit_count
+
+
+func get_player_unit_count() -> Dictionary[String, int]:
+	var player_unit_count: Dictionary[String, int] = {}
+	for player in units:
+		player_unit_count[player] = units[player].size()
+
+	return player_unit_count
+
+
 func update_cell_cost(map_index: Vector2i, new_cost: float) -> void:
 	var i := get_cell_id(map_index)
 	path_finder.set_point_weight_scale(i, new_cost)
