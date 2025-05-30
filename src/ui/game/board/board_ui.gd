@@ -7,10 +7,10 @@ enum HighlightTile { HOVER, FOCUS, MOVE, ATTACK, ATTACK_MOVE, COMMITTED_UNIT }
 var UnitState = MatchPlayManager.UnitState
 
 var highlight_tile_scene: PackedScene = preload(
-	"res://scenes/ui/board/highlight-tile.tscn"
+	"res://scenes/ui/game/board/highlight_tile.tscn"
 )
 var player_unit_tile: PackedScene = preload(
-	"res://scenes/ui/board/player_unit_tile.tscn"
+	"res://scenes/ui/game/board/player_unit_tile.tscn"
 )
 
 var __hover_tile: Sprite2D
