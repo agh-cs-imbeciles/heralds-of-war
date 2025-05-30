@@ -1,4 +1,4 @@
-class_name ExitButton extends StandardButton
+class_name ExitButton extends Button
 
 
 func __exit_game() -> void:
