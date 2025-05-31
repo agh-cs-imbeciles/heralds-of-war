@@ -33,6 +33,7 @@ folder_colors={
 "res://assets/": "pink",
 "res://docs/": "gray",
 "res://scenes/": "blue",
+"res://shaders/": "yellow",
 "res://src/": "teal",
 "res://themes/": "purple"
 }
