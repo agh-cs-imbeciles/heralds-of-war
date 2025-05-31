@@ -1,6 +1,6 @@
 class_name MatchPlacementManager extends Object
 
-signal changed_user_placement(player: String)
+signal player_placement_started(player: String)
 
 var __current_player_index: int = 0
 
@@ -37,7 +37,7 @@ func __on_phase_changed(phase: Match.Phase) -> void:
 		__players[__current_player_index],
 		__match.unit_count_per_player
 	])
-	changed_user_placement.emit(__players[__current_player_index])
+	player_placement_started.emit(__players[__current_player_index])
 
 
 func __on_cell_pressed(cell_position: Vector2i, button: MouseButton) -> void:
@@ -50,7 +50,7 @@ func __on_cell_pressed(cell_position: Vector2i, button: MouseButton) -> void:
 
 	var player := __players[__current_player_index]
 
-	if __board.get_tile_team_affiliation(cell_position) != player:
+	if get_tile_team_affiliation(cell_position) != player:
 		print("Player %s cannot place a unit at %s." % [player, cell_position])
 		return
 
@@ -58,12 +58,11 @@ func __on_cell_pressed(cell_position: Vector2i, button: MouseButton) -> void:
 
 	if __is_placement_finished():
 		__phase_manager.enter_phase(Match.Phase.PLAY)
-		changed_user_placement.emit("null")
 		return
 
 	if __board.units[player].size() >= __match.unit_count_per_player:
 		__current_player_index = (__current_player_index + 1) % __players.size()
-		changed_user_placement.emit(__players[__current_player_index])
+		player_placement_started.emit(__players[__current_player_index])
 
 	print("Player %s has to place %s remaining units." % [
 		player,
@@ -84,6 +83,7 @@ func place_unit(player: String, map_position: Vector2i) -> void:
 func __instantiate_swordsman(player: String, map_position: Vector2i) -> Unit:
 	var swordsman: Unit = swordsman_scene.instantiate()
 	swordsman.board = __match.board
+	swordsman.board_tile_map = __match.board.board_tile_map
 	swordsman.initial_stamina = 60
 	swordsman.initial_health = 100
 	swordsman.initial_attack_strength = 50
@@ -114,3 +114,16 @@ func __is_placement_finished() -> bool:
 
 func get_current_player() -> String:
 	return __players[__current_player_index]
+
+
+func get_tile_team_affiliation(map_index: Vector2i) -> String:
+	for tile_map in __board.board_tile_map.team_tiles:
+		var tile := tile_map.get_cell_tile_data(map_index)
+		if tile == null:
+			continue
+		var tile_data: String = tile_map.get_meta("Team")
+		if tile_data == null:
+			return "null"
+		return tile_data
+
+	return "null"

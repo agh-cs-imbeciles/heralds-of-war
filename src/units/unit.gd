@@ -22,6 +22,7 @@ var defense: int
 var player: String
 var map_position: Vector2i
 var board: Board
+var board_tile_map: BoardTileMap
 
 
 func can_move(map_index: Vector2i) -> bool:
@@ -50,7 +51,7 @@ func get_move_cost(to: Vector2i) -> int:
 func get_legal_moves() -> Array[Vector2i]:
 	var legal_moves: Array[Vector2i] = []
 
-	for cell in board.get_used_cells():
+	for cell in board_tile_map.get_used_cells():
 		var path_cost := get_move_cost(cell)
 
 		if path_cost > 0.0 and path_cost <= stamina:
@@ -61,7 +62,7 @@ func get_legal_moves() -> Array[Vector2i]:
 
 func set_position_from_map(map: Vector2i) -> void:
 	map_position = map
-	position = board.map_to_local(map_position) + offset
+	position = board_tile_map.map_to_local(map_position) + offset
 
 
 func move(to: Vector2i) -> void:

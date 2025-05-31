@@ -2,6 +2,7 @@ class_name BoardUi extends Node2D
 
 @onready var __match: Match = $"../.."
 @onready var __board: Board = $"../../Board"
+@onready var __board_tile_map: BoardTileMap = $"../../Board/BoardTileMap"
 
 enum HighlightTile { HOVER, FOCUS, MOVE, ATTACK, ATTACK_MOVE, COMMITTED_UNIT }
 var UnitState = MatchPlayManager.UnitState
@@ -30,7 +31,7 @@ func _ready() -> void:
 
 func __on_pre_phase_changed(phase: Match.Phase) -> void:
 	if phase == Match.Phase.PLACEMENT:
-		__match.placement_manager.changed_user_placement.connect(
+		__match.placement_manager.player_placement_started.connect(
 			__on_changed_user_placement
 		)
 
@@ -51,31 +52,31 @@ func __on_match_ready() -> void:
 		__on_unit_uncommitted
 	)
 
-	for tile_map in __board.team_tiles:
+	for tile_map in __board_tile_map.team_tiles:
 		tile_map.hide()
 
 
 func __on_changed_user_placement(player: String) -> void:
-	for tile in __board.get_used_cells():
-		__board.update_tile(tile, func(_x): return null)
+	for tile in __board_tile_map.get_used_cells():
+		__board_tile_map.update_tile(tile, func(_x): return null)
 
 	if player == "null":
 		return
 
 	var darkened_cells: Array[Vector2i] = []
 	var selected_tile_map: TileMapLayer = null
-	for tile_map in __board.team_tiles:
+	for tile_map in __board_tile_map.team_tiles:
 		if tile_map.get_meta("Team") == player:
 			selected_tile_map = tile_map
 			break
 
 	var current_team_cells := selected_tile_map.get_used_cells()
-	for cell in __board.get_used_cells():
+	for cell in __board_tile_map.get_used_cells():
 		if cell not in current_team_cells:
 			darkened_cells.append(cell)
 
 	for cell in darkened_cells:
-		__board.update_tile(cell, func(x): x.modulate = Color("#7d7d7d"))
+		__board_tile_map.update_tile(cell, func(x): x.modulate = Color("#7d7d7d"))
 
 
 func __on_board_ready() -> void:
@@ -100,14 +101,14 @@ func __on_unit_died(unit: Unit) -> void:
 
 
 func __on_mouse_entered_cell_placement_phase(cell_position: Vector2i) -> void:
-	if __board.get_tile_team_affiliation(cell_position) != __match.placement_manager.get_current_player():
+	if __match.placement_manager.get_tile_team_affiliation(cell_position) != __match.placement_manager.get_current_player():
 		unrender_hover()
 		return
-	render_hover(__board.map_to_local(cell_position))
+	render_hover(__board_tile_map.map_to_local(cell_position))
 
 
 func __on_mouse_entered_cell_play_phase(cell_position: Vector2i) -> void:
-	render_hover(__board.map_to_local(cell_position))
+	render_hover(__board_tile_map.map_to_local(cell_position))
 
 
 func __on_mouse_left_board() -> void:
@@ -122,7 +123,9 @@ func __on_phase_changed(phase: Match.Phase) -> void:
 	if phase != Match.Phase.PLAY:
 		return
 
-	__board.input_manager.mouse_entered_cell.connect(
+	for tile in __board.board_tile_map.get_used_cells():
+		__board_tile_map.update_tile(tile, func(_x): return null)
+	__board.input_manager.mouse_entered_cell.disconnect(
 		__on_mouse_entered_cell_placement_phase
 	)
 	__board.input_manager.mouse_entered_cell.connect(
@@ -136,21 +139,21 @@ func __on_sequence_advanced(player: String) -> void:
 
 
 func __on_unit_focused(unit: Unit, unit_state: MatchPlayManager.UnitState) -> void:
-	render_focus(__board.map_to_local(unit.map_position))
+	render_focus(__board_tile_map.map_to_local(unit.map_position))
 
 	var marked_cells: Array[Vector2]
 	if unit_state == UnitState.SELECTED:
-		marked_cells.assign(unit.get_legal_moves().map(__board.map_to_local))
+		marked_cells.assign(unit.get_legal_moves().map(__board_tile_map.map_to_local))
 		render_marked_cells(marked_cells)
 	elif unit_state == UnitState.ATTACK_SELECTED:
 		var attackable_cells = unit.get_attacks()
-		marked_cells.assign(attackable_cells.map(__board.map_to_local))
+		marked_cells.assign(attackable_cells.map(__board_tile_map.map_to_local))
 		render_marked_cells(marked_cells, HighlightTile.ATTACK)
 
 		if is_instance_of(unit, MeleeUnit):
 			var move_attackable_cells: Array[Vector2i] = unit.get_attacks_after_move()
 			move_attackable_cells = move_attackable_cells.filter(func(x): return not attackable_cells.has(x))
-			marked_cells.assign(move_attackable_cells.map(__board.map_to_local))
+			marked_cells.assign(move_attackable_cells.map(__board_tile_map.map_to_local))
 			render_marked_cells(marked_cells, HighlightTile.ATTACK_MOVE)
 
 
@@ -161,12 +164,12 @@ func __on_unit_unfocused() -> void:
 
 func __on_unit_committed(unit: Unit) -> void:
 	unit.moved.connect(__on_committed_unit_moved)
-	__commit_tile.position = __board.map_to_local(unit.map_position)
+	__commit_tile.position = __board_tile_map.map_to_local(unit.map_position)
 	__commit_tile.show()
 
 
 func __on_committed_unit_moved(unit: Unit, _from: Vector2i) -> void:
-	__commit_tile.position = __board.map_to_local(unit.map_position)
+	__commit_tile.position = __board_tile_map.map_to_local(unit.map_position)
 
 
 func __on_unit_uncommitted(unit: Unit) -> void:
@@ -269,7 +272,7 @@ func highlight_player_units(player: String) -> void:
 func add_player_unit_tile(unit: Unit) -> Sprite2D:
 	var tile: Sprite2D = player_unit_tile.instantiate()
 	tile.name = "PlayerUnitTile%s" % __player_unit_tiles.size()
-	tile.position = __board.map_to_local(unit.map_position)
+	tile.position = __board_tile_map.map_to_local(unit.map_position)
 	tile.modulate = Color("#1ad9ff") if unit.player == "A" else Color("#ff1a57")
 	tile.z_index = 63
 
@@ -289,7 +292,7 @@ func update_player_unit_tile(unit: Unit, previous_position: Vector2i) -> void:
 	var tile: Sprite2D = __player_unit_tiles.get(old_map_position_key)
 
 	__player_unit_tiles.erase(old_map_position_key)
-	tile.position = __board.map_to_local(unit.map_position)
+	tile.position = __board_tile_map.map_to_local(unit.map_position)
 	__player_unit_tiles.set(map_position_key, tile)
 
 
