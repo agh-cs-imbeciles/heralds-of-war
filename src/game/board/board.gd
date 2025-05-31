@@ -9,9 +9,10 @@ var units: Dictionary[String, Variant] = {}
 var path_finder: AStar2D = AStar2D.new()
 
 @onready var input_manager: BoardInputManager = $"BoardInputManager"
-@onready var team_parts_tiles: TileMapLayer = $"../TeamMapParts"
+@onready var team_tiles: Array[TileMapLayer] = [$"../TeamPartA", $"../TeamPartB"]
 @onready var unit_node_container: Node = $"Units"
 
+var __tile_update_functions: Dictionary[Vector2i, Callable] = {}
 
 func _ready() -> void:
 	load_board_cost()
@@ -128,7 +129,31 @@ func get_nearest_cells(center: Vector2i, max_distance: int) -> Array[Vector2i]:
 
 
 func get_tile_team_affiliation(map_index: Vector2i) -> String:
-	var tile_data := team_parts_tiles.get_cell_tile_data(map_index)
-	if tile_data == null:
-		return "null"
-	return tile_data.get_custom_data("Team")
+	for tile_map in team_tiles:
+
+		var tile := tile_map.get_cell_tile_data(map_index)
+		if tile == null:
+			continue
+		
+		var tile_data: String = tile_map.get_meta("Team")
+		if tile_data == null:
+			return "null"
+		
+		return tile_data
+
+	return "null"
+
+
+func update_tile(coords: Vector2i, fn: Callable):
+	__tile_update_functions[coords] = fn
+	notify_runtime_tile_data_update()
+
+
+func _use_tile_data_runtime_update(coords: Vector2i) -> bool:
+	return __tile_update_functions.has(coords)
+
+	
+func _tile_data_runtime_update(coords: Vector2i, tile_data: TileData) -> void:
+	var fn: Callable = __tile_update_functions[coords]
+	fn.call(tile_data)
+	__tile_update_functions.erase(coords)

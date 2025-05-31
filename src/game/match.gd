@@ -12,6 +12,7 @@ var phase: Phase = Phase.INIT
 var turn: int = 1
 
 @onready var board: Board = $"Board"
+@onready var board_ui: BoardUi = $Ui/BoardUi
 var phase_manager: MatchPhaseManager
 var placement_manager: MatchPlacementManager
 var play_manager: MatchPlayManager
@@ -23,7 +24,7 @@ func _ready() -> void:
 
 	placement_manager = MatchPlacementManager.new(self)
 	play_manager = MatchPlayManager.new(self)
-
+	placement_manager.user_placement_started.connect(board_ui.__on_changed_user_placement)
 	phase_manager.enter_phase(Phase.PLACEMENT)
 
 

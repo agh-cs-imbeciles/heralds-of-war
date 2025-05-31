@@ -2,7 +2,6 @@ class_name BoardUi extends Node2D
 
 @onready var __match: Match = $"../.."
 @onready var __board: Board = $"../../Board"
-@onready var __team_parts_tiles: TileMapLayer = $"../../TeamMapParts"
 
 enum HighlightTile { HOVER, FOCUS, MOVE, ATTACK, ATTACK_MOVE, COMMITTED_UNIT }
 var UnitState = MatchPlayManager.UnitState
@@ -45,10 +44,36 @@ func __on_match_ready() -> void:
 		__on_unit_uncommitted
 	)
 
+	for tile_map in __board.team_tiles:
+		tile_map.hide()
+
+
+func __on_changed_user_placement(player: String) -> void:
+	for tile in __board.get_used_cells():
+		__board.update_tile(tile, func(_x): return null)
+
+	if player == "null":
+		return
+
+	var darkened_cells: Array[Vector2i] = []
+	var selected_tile_map: TileMapLayer = null
+	for tile_map in __board.team_tiles:
+		if tile_map.get_meta("Team") == player:
+			selected_tile_map = tile_map
+			break
+
+	var current_team_cells := selected_tile_map.get_used_cells()
+	for cell in __board.get_used_cells():
+		if cell not in current_team_cells:
+			darkened_cells.append(cell)
+
+	for cell in darkened_cells:
+		__board.update_tile(cell, func(x): x.modulate = Color("#7d7d7d"))
+
 
 func __on_board_ready() -> void:
 	__board.unit_added.connect(__on_unit_added)
-	__board.input_manager.mouse_entered_cell.connect(__on_mouse_entered_cell)
+	__board.input_manager.mouse_entered_cell.connect(__on_mouse_entered_cell_placement_phase)
 	__board.input_manager.mouse_left_board.connect(__on_mouse_left_board)
 
 
@@ -67,7 +92,14 @@ func __on_unit_died(unit: Unit) -> void:
 	remove_player_unit_tile(unit)
 
 
-func __on_mouse_entered_cell(cell_position: Vector2i) -> void:
+func __on_mouse_entered_cell_placement_phase(cell_position: Vector2i) -> void:
+	if __board.get_tile_team_affiliation(cell_position) != __match.placement_manager.get_current_player():
+		unrender_hover()
+		return
+	render_hover(__board.map_to_local(cell_position))
+
+
+func __on_mouse_entered_cell_play_phase(cell_position: Vector2i) -> void:
 	render_hover(__board.map_to_local(cell_position))
 
 
@@ -80,15 +112,15 @@ func __on_turn_ended(_turn: int) -> void:
 
 
 func __on_phase_changed(phase: Match.Phase) -> void:
-	match (phase):
-		Match.Phase.PLACEMENT:
-			__team_parts_tiles.show()
-		Match.Phase.PLAY:
-			__team_parts_tiles.hide()
-	
 	if phase != Match.Phase.PLAY:
 		return
 
+	__board.input_manager.mouse_entered_cell.connect(
+		__on_mouse_entered_cell_placement_phase
+	)
+	__board.input_manager.mouse_entered_cell.connect(
+		__on_mouse_entered_cell_play_phase
+	)
 	highlight_player_units(__match.get_current_player())
 
 
