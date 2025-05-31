@@ -1,5 +1,7 @@
 class_name MatchPlacementManager extends Object
 
+signal changed_user_placement(player: String)
+
 var __current_player_index: int = 0
 
 var __match: Match
@@ -35,6 +37,7 @@ func __on_phase_changed(phase: Match.Phase) -> void:
 		__players[__current_player_index],
 		__match.unit_count_per_player
 	])
+	changed_user_placement.emit(__players[__current_player_index])
 
 
 func __on_cell_pressed(cell_position: Vector2i, button: MouseButton) -> void:
@@ -47,14 +50,20 @@ func __on_cell_pressed(cell_position: Vector2i, button: MouseButton) -> void:
 
 	var player := __players[__current_player_index]
 
+	if __board.get_tile_team_affiliation(cell_position) != player:
+		print("Player %s cannot place a unit at %s." % [player, cell_position])
+		return
+
 	place_unit(player, cell_position)
 
 	if __is_placement_finished():
 		__phase_manager.enter_phase(Match.Phase.PLAY)
+		changed_user_placement.emit("null")
 		return
 
 	if __board.units[player].size() >= __match.unit_count_per_player:
 		__current_player_index = (__current_player_index + 1) % __players.size()
+		changed_user_placement.emit(__players[__current_player_index])
 
 	print("Player %s has to place %s remaining units." % [
 		player,
@@ -101,3 +110,7 @@ func __is_placement_finished() -> bool:
 		if __board.units[player].size() < __match.unit_count_per_player:
 			return false
 	return true
+
+
+func get_current_player() -> String:
+	return __players[__current_player_index]
