@@ -3,6 +3,7 @@ class_name Match extends Node2D
 enum Phase { INIT = 0, PLACEMENT = 1, PLAY = 2 }
 
 signal turn_ended(turn: int)
+signal pre_phase_changed(phase: Phase)
 
 @export var match_name: String
 @export var unit_count_per_player: int = 3
@@ -12,7 +13,6 @@ var phase: Phase = Phase.INIT
 var turn: int = 1
 
 @onready var board: Board = $"Board"
-@onready var board_ui: BoardUi = $Ui/BoardUi
 var phase_manager: MatchPhaseManager
 var placement_manager: MatchPlacementManager
 var play_manager: MatchPlayManager
@@ -24,8 +24,10 @@ func _ready() -> void:
 
 	placement_manager = MatchPlacementManager.new(self)
 	play_manager = MatchPlayManager.new(self)
-	placement_manager.user_placement_started.connect(board_ui.__on_changed_user_placement)
-	phase_manager.enter_phase(Phase.PLACEMENT)
+
+	var new_phase := Phase.PLACEMENT
+	pre_phase_changed.emit(new_phase)
+	phase_manager.enter_phase(new_phase)
 
 
 func __on_phase_changed(new_phase: Phase) -> void:

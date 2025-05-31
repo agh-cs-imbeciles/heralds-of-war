@@ -23,10 +23,18 @@ var __player_unit_tiles: Dictionary[String, Sprite2D] = {}
 func _ready() -> void:
 	__match.ready.connect(__on_match_ready)
 	__board.ready.connect(__on_board_ready)
-
+	__match.pre_phase_changed.connect(
+		__match_pre_phase_changed
+	)
 	__instantiate_highlight_tile(HighlightTile.HOVER)
 	__instantiate_highlight_tile(HighlightTile.FOCUS)
 	__instantiate_highlight_tile(HighlightTile.COMMITTED_UNIT)
+
+
+func __match_pre_phase_changed(_phase: Match.Phase) -> void:
+	__match.placement_manager.changed_user_placement.connect(
+		__on_changed_user_placement
+	)
 
 
 func __on_match_ready() -> void:
