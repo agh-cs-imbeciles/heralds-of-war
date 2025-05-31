@@ -6,7 +6,7 @@ class_name MatchUi extends Node
 
 
 func _ready() -> void:
-	__match.ended.connect(__on_match_ended)
+	__match.match_ended.connect(__on_match_ended)
 
 
 func __on_match_ended(victor: String) -> void:

@@ -3,7 +3,7 @@ class_name Match extends Node2D
 enum Phase { INIT = 0, PLACEMENT = 1, PLAY = 2 }
 
 signal turn_ended(turn: int)
-signal ended(victor: String)
+signal match_ended(victor: String)
 
 @export var match_name: String
 @export var unit_count_per_player: int = 3
@@ -28,7 +28,7 @@ func _ready() -> void:
 	play_manager = MatchPlayManager.new(self)
 
 	phase_manager.phase_changed.connect(__on_phase_changed)
-	play_manager.ended.connect(__on_match_ended)
+	play_manager.match_ended.connect(__on_match_ended)
 
 	phase_manager.enter_phase(Phase.PLACEMENT)
 
@@ -40,7 +40,7 @@ func __on_phase_changed(new_phase: Phase) -> void:
 func __on_match_ended(victor: String) -> void:
 	print("The match has ended")
 	print("Player %s is victorious" % victor)
-	ended.emit(victor)
+	match_ended.emit(victor)
 
 
 func get_current_player() -> String:
