@@ -83,7 +83,7 @@ func place_unit(player: String, map_position: Vector2i) -> void:
 func __instantiate_swordsman(player: String, map_position: Vector2i) -> Unit:
 	var swordsman: Unit = swordsman_scene.instantiate()
 	swordsman.board = __match.board
-	swordsman.board_tile_map = __match.board.board_tile_map
+	swordsman.board_tile_map = __match.board.tile_map
 	swordsman.initial_stamina = 60
 	swordsman.initial_health = 100
 	swordsman.initial_attack_strength = 50
@@ -117,13 +117,15 @@ func get_current_player() -> String:
 
 
 func get_tile_team_affiliation(map_index: Vector2i) -> String:
-	for tile_map in __board.board_tile_map.team_tiles:
+	for tile_map in __board.tile_map.team_tiles:
 		var tile := tile_map.get_cell_tile_data(map_index)
 		if tile == null:
 			continue
+
 		var tile_data: String = tile_map.get_meta("Team")
 		if tile_data == null:
 			return "null"
+
 		return tile_data
 
 	return "null"

@@ -2,12 +2,12 @@ class_name BoardTileMap extends TileMapLayer
 
 @onready var team_tiles: Array[TileMapLayer] = [
 	$"./PlayerA",
-	$"./PlayerB"
+	$"./PlayerB",
 ]
 var __tile_update_functions: Dictionary[Vector2i, Callable] = {}
 
 
-func update_tile(coords: Vector2i, fn: Callable):
+func update_tile(coords: Vector2i, fn: Callable) -> void:
 	__tile_update_functions[coords] = fn
 	notify_runtime_tile_data_update()
 

@@ -24,6 +24,7 @@ var __player_unit_tiles: Dictionary[String, Sprite2D] = {}
 func _ready() -> void:
 	__match.ready.connect(__on_match_ready)
 	__board.ready.connect(__on_board_ready)
+
 	__instantiate_highlight_tile(HighlightTile.HOVER)
 	__instantiate_highlight_tile(HighlightTile.FOCUS)
 	__instantiate_highlight_tile(HighlightTile.COMMITTED_UNIT)
@@ -59,9 +60,6 @@ func __on_match_ready() -> void:
 func __on_changed_user_placement(player: String) -> void:
 	for tile in __board_tile_map.get_used_cells():
 		__board_tile_map.update_tile(tile, func(_x): return null)
-
-	if player == "null":
-		return
 
 	var darkened_cells: Array[Vector2i] = []
 	var selected_tile_map: TileMapLayer = null
@@ -123,7 +121,7 @@ func __on_phase_changed(phase: Match.Phase) -> void:
 	if phase != Match.Phase.PLAY:
 		return
 
-	for tile in __board.board_tile_map.get_used_cells():
+	for tile in __board.tile_map.get_used_cells():
 		__board_tile_map.update_tile(tile, func(_x): return null)
 	__board.input_manager.mouse_entered_cell.disconnect(
 		__on_mouse_entered_cell_placement_phase
