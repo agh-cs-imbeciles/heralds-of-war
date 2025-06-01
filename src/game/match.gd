@@ -30,7 +30,7 @@ func _ready() -> void:
 	phase_manager.phase_changed.connect(__on_phase_changed)
 	play_manager.match_ended.connect(__on_match_ended)
 
-	phase_manager.enter_phase(Phase.PLACEMENT)
+	ready.connect(__on_ready)
 
 
 func __on_phase_changed(new_phase: Phase) -> void:
@@ -41,6 +41,10 @@ func __on_match_ended(victor: String) -> void:
 	print("The match has ended")
 	print("Player %s is victorious" % victor)
 	match_ended.emit(victor)
+
+
+func __on_ready() -> void:
+	phase_manager.enter_phase(Phase.PLACEMENT)
 
 
 func get_current_player() -> String:

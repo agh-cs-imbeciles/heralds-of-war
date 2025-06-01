@@ -1,5 +1,7 @@
 class_name MatchPlacementManager extends Object
 
+signal player_placement_started(player: String)
+
 var __current_player_index: int = 0
 
 var __match: Match
@@ -35,6 +37,7 @@ func __on_phase_changed(phase: Match.Phase) -> void:
 		__players[__current_player_index],
 		__match.unit_count_per_player
 	])
+	player_placement_started.emit(__players[__current_player_index])
 
 
 func __on_cell_pressed(cell_position: Vector2i, button: MouseButton) -> void:
@@ -47,6 +50,10 @@ func __on_cell_pressed(cell_position: Vector2i, button: MouseButton) -> void:
 
 	var player := __players[__current_player_index]
 
+	if get_cell_team_affiliation(cell_position) != player:
+		print("Player %s cannot place a unit at %s." % [player, cell_position])
+		return
+
 	place_unit(player, cell_position)
 
 	if __is_placement_finished():
@@ -55,6 +62,7 @@ func __on_cell_pressed(cell_position: Vector2i, button: MouseButton) -> void:
 
 	if __board.units[player].size() >= __match.unit_count_per_player:
 		__current_player_index = (__current_player_index + 1) % __players.size()
+		player_placement_started.emit(__players[__current_player_index])
 
 	print("Player %s has to place %s remaining units." % [
 		player,
@@ -101,3 +109,22 @@ func __is_placement_finished() -> bool:
 		if __board.units[player].size() < __match.unit_count_per_player:
 			return false
 	return true
+
+
+func get_current_player() -> String:
+	return __players[__current_player_index]
+
+
+func get_cell_team_affiliation(map_index: Vector2i) -> String:
+	for tile_map in __board.tile_map.team_tiles:
+		var tile := tile_map.get_cell_tile_data(map_index)
+		if tile == null:
+			continue
+
+		var tile_data: String = tile_map.get_meta("Team")
+		if tile_data == null:
+			return "null"
+
+		return tile_data
+
+	return "null"
