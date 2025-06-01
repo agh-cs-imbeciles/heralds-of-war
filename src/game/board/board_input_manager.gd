@@ -49,7 +49,8 @@ func __handle_mouse_button_pressed(event: InputEventMouseButton) -> void:
 
 	var is_valid_button_pressed := button == MOUSE_BUTTON_LEFT \
 		or button == MOUSE_BUTTON_RIGHT
-	var is_cell_pressed := board.tile_map.get_used_rect().has_point(mouse_map_position)
+	var is_cell_pressed := board.tile_map.get_used_rect() \
+		.has_point(mouse_map_position)
 	if not (is_valid_button_pressed and is_cell_pressed):
 		return
 
