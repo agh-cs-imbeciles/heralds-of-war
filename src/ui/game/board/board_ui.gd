@@ -52,9 +52,6 @@ func __on_match_ready() -> void:
 		__on_unit_uncommitted
 	)
 
-	for tile_map in __board.tile_map.team_tiles:
-		tile_map.hide()
-
 
 func __on_player_placement_started(player: String) -> void:
 	darken_player_cells(player)
@@ -80,6 +77,8 @@ func __on_board_ready() -> void:
 	__board.unit_added.connect(__on_unit_added)
 	__board.input_manager.mouse_entered_cell.connect(__on_mouse_entered_cell_placement_phase)
 	__board.input_manager.mouse_left_board.connect(__on_mouse_left_board)
+
+	hide_player_tile_maps()
 
 
 func __on_unit_added(unit: Unit) -> void:
@@ -222,6 +221,11 @@ func __instantiate_highlight_tile(tile_type: HighlightTile) -> Sprite2D:
 	add_child(tile)
 
 	return tile
+
+
+func hide_player_tile_maps() -> void:
+	for tile_map in __board.tile_map.team_tiles:
+		tile_map.hide()
 
 
 func set_cells_color(cells: Array[Vector2i], color: Color) -> void:
