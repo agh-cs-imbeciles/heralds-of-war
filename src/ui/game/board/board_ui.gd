@@ -33,7 +33,7 @@ func _ready() -> void:
 func __on_pre_phase_changed(phase: Match.Phase) -> void:
 	if phase == Match.Phase.PLACEMENT:
 		__match.placement_manager.player_placement_started.connect(
-			__on_changed_user_placement
+			__on_player_placement_started
 		)
 
 
@@ -57,24 +57,24 @@ func __on_match_ready() -> void:
 		tile_map.hide()
 
 
-func __on_changed_user_placement(player: String) -> void:
-	for tile in __board_tile_map.get_used_cells():
-		__board_tile_map.update_tile(tile, func(_x): return null)
+func __on_player_placement_started(player: String) -> void:
+	darken_player_cells(player)
 
-	var darkened_cells: Array[Vector2i] = []
-	var selected_tile_map: TileMapLayer = null
-	for tile_map in __board_tile_map.team_tiles:
+
+func darken_player_cells(player: String) -> void:
+	var player_tile_map: TileMapLayer = null
+	for tile_map in __board.tile_map.team_tiles:
 		if tile_map.get_meta("Team") == player:
-			selected_tile_map = tile_map
+			player_tile_map = tile_map
 			break
 
-	var current_team_cells := selected_tile_map.get_used_cells()
-	for cell in __board_tile_map.get_used_cells():
-		if cell not in current_team_cells:
+	var darkened_cells: Array[Vector2i] = []
+	var player_cells := player_tile_map.get_used_cells()
+	for cell in __board.tile_map.get_used_cells():
+		if cell not in player_cells:
 			darkened_cells.append(cell)
 
-	for cell in darkened_cells:
-		__board_tile_map.update_tile(cell, func(x): x.modulate = Color("#7d7d7d"))
+	set_cells_color(darkened_cells, Color("#7d7d7d"))
 
 
 func __on_board_ready() -> void:
@@ -121,8 +121,7 @@ func __on_phase_changed(phase: Match.Phase) -> void:
 	if phase != Match.Phase.PLAY:
 		return
 
-	for tile in __board.tile_map.get_used_cells():
-		__board_tile_map.update_tile(tile, func(_x): return null)
+	set_cells_color(__board.tile_map.get_used_cells(), Color.WHITE)
 	__board.input_manager.mouse_entered_cell.disconnect(
 		__on_mouse_entered_cell_placement_phase
 	)
@@ -221,6 +220,12 @@ func __instantiate_highlight_tile(tile_type: HighlightTile) -> Sprite2D:
 	add_child(tile)
 
 	return tile
+
+
+func set_cells_color(cells: Array[Vector2i], color: Color) -> void:
+	for cell in cells:
+		__board.tile_map.set_cell_color(cell, color)
+	__board.tile_map.notify_runtime_tile_data_update()
 
 
 func render_hover(hover_position: Vector2) -> void:

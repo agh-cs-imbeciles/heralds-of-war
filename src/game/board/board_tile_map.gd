@@ -7,9 +7,14 @@ class_name BoardTileMap extends TileMapLayer
 var __tile_update_functions: Dictionary[Vector2i, Callable] = {}
 
 
-func update_tile(coords: Vector2i, fn: Callable) -> void:
-	__tile_update_functions[coords] = fn
-	notify_runtime_tile_data_update()
+func set_cell_color(coords: Vector2i, color: Color, update = false) -> void:
+	__tile_update_functions.set(coords, func(tile: TileData) -> TileData:
+		tile.modulate = color
+		return tile
+	)
+
+	if update:
+		notify_runtime_tile_data_update()
 
 
 func _use_tile_data_runtime_update(coords: Vector2i) -> bool:
@@ -17,6 +22,6 @@ func _use_tile_data_runtime_update(coords: Vector2i) -> bool:
 
 
 func _tile_data_runtime_update(coords: Vector2i, tile_data: TileData) -> void:
-	var fn: Callable = __tile_update_functions[coords]
-	fn.call(tile_data)
+	var update_fn: Callable = __tile_update_functions[coords]
+	update_fn.call(tile_data)
 	__tile_update_functions.erase(coords)
