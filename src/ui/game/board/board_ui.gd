@@ -75,7 +75,6 @@ func darken_player_cells(player: String) -> void:
 
 func __on_board_ready() -> void:
 	__board.unit_added.connect(__on_unit_added)
-	__board.input_manager.mouse_entered_cell.connect(__on_mouse_entered_cell_placement_phase)
 	__board.input_manager.mouse_left_board.connect(__on_mouse_left_board)
 
 	hide_player_tile_maps()
@@ -119,17 +118,21 @@ func __on_turn_ended(_turn: int) -> void:
 
 
 func __on_phase_changed(phase: Match.Phase) -> void:
-	if phase != Match.Phase.PLAY:
-		return
+	if phase == Match.Phase.PLACEMENT:
+		__board.input_manager.mouse_entered_cell.connect(
+			__on_mouse_entered_cell_placement_phase
+		)
 
-	set_cells_color(__board.tile_map.get_used_cells(), Color.WHITE)
-	__board.input_manager.mouse_entered_cell.disconnect(
-		__on_mouse_entered_cell_placement_phase
-	)
-	__board.input_manager.mouse_entered_cell.connect(
-		__on_mouse_entered_cell_play_phase
-	)
-	highlight_player_units(__match.get_current_player())
+	elif phase == Match.Phase.PLAY:
+		__board.input_manager.mouse_entered_cell.disconnect(
+			__on_mouse_entered_cell_placement_phase
+		)
+		__board.input_manager.mouse_entered_cell.connect(
+			__on_mouse_entered_cell_play_phase
+		)
+
+		set_cells_color(__board.tile_map.get_used_cells(), Color.WHITE)
+		highlight_player_units(__match.get_current_player())
 
 
 func __on_sequence_advanced(player: String) -> void:
