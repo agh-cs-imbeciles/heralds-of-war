@@ -5,6 +5,7 @@
 [ext_resource type="PackedScene" uid="uid://bp0h3drudi8ii" path="res://scenes/ui/menu/match_entry.tscn" id="4_75vmi"]
 
 [node name="MatchSelect" type="Control"]
+process_mode = 3
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0

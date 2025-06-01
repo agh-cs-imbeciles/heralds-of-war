@@ -3,6 +3,7 @@ class_name MatchPlayManager extends Object
 signal unit_focused(unit: Unit, unit_state: UnitState)
 signal unit_unfocused
 signal unit_slot_finished(unit: Unit)
+signal match_ended(victor: String)
 
 enum UnitState { UNSELECTED, SELECTED, ATTACK_SELECTED }
 
@@ -92,6 +93,9 @@ func __init_signal_connections() -> void:
 
 func __on_unit_died(unit: Unit) -> void:
 	__board.remove_unit(unit)
+
+	if __board.units[unit.player].size() == 0:
+		match_ended.emit("A" if unit.player == "B" else "B")
 
 
 func __on_sequence_exhausted() -> void:
