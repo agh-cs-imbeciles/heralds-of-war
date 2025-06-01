@@ -18,14 +18,14 @@ func _input(event: InputEvent) -> void:
 
 func __get_mouse_map_position() -> Vector2i:
 	var mouse_position := board.get_global_mouse_position()
-	var map_position := board.local_to_map(mouse_position)
+	var map_position := board.tile_map.local_to_map(mouse_position)
 	return map_position
 
 
 func __handle_mouse_motion() -> void:
 	var mouse_map_position := __get_mouse_map_position()
 
-	if board.get_used_rect().has_point(mouse_map_position):
+	if board.tile_map.get_used_rect().has_point(mouse_map_position):
 		if mouse_map_position == mouse_entered_cell_position:
 			return
 		__on_mouse_entered_cell(mouse_map_position)
@@ -49,7 +49,8 @@ func __handle_mouse_button_pressed(event: InputEventMouseButton) -> void:
 
 	var is_valid_button_pressed := button == MOUSE_BUTTON_LEFT \
 		or button == MOUSE_BUTTON_RIGHT
-	var is_cell_pressed := board.get_used_rect().has_point(mouse_map_position)
+	var is_cell_pressed := board.tile_map.get_used_rect() \
+		.has_point(mouse_map_position)
 	if not (is_valid_button_pressed and is_cell_pressed):
 		return
 

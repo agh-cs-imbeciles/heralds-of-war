@@ -24,11 +24,15 @@ func _ready() -> void:
 	placement_manager = MatchPlacementManager.new(self)
 	play_manager = MatchPlayManager.new(self)
 
-	phase_manager.enter_phase(Phase.PLACEMENT)
+	ready.connect(__on_ready)
 
 
 func __on_phase_changed(new_phase: Phase) -> void:
 	phase = new_phase
+
+
+func __on_ready() -> void:
+	phase_manager.enter_phase(Phase.PLACEMENT)
 
 
 func get_current_player() -> String:
