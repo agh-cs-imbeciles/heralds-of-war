@@ -99,7 +99,9 @@ func __on_unit_died(unit: Unit) -> void:
 
 
 func __on_mouse_entered_cell_placement_phase(cell_position: Vector2i) -> void:
-	if __match.placement_manager.get_tile_team_affiliation(cell_position) != __match.placement_manager.get_current_player():
+	var cell_team_affiliation := __match.placement_manager \
+		.get_cell_team_affiliation(cell_position)
+	if cell_team_affiliation != __match.placement_manager.get_current_player():
 		unrender_hover()
 		return
 	render_hover(__board_tile_map.map_to_local(cell_position))

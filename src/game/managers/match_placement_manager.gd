@@ -50,7 +50,7 @@ func __on_cell_pressed(cell_position: Vector2i, button: MouseButton) -> void:
 
 	var player := __players[__current_player_index]
 
-	if get_tile_team_affiliation(cell_position) != player:
+	if get_cell_team_affiliation(cell_position) != player:
 		print("Player %s cannot place a unit at %s." % [player, cell_position])
 		return
 
@@ -116,7 +116,7 @@ func get_current_player() -> String:
 	return __players[__current_player_index]
 
 
-func get_tile_team_affiliation(map_index: Vector2i) -> String:
+func get_cell_team_affiliation(map_index: Vector2i) -> String:
 	for tile_map in __board.tile_map.team_tiles:
 		var tile := tile_map.get_cell_tile_data(map_index)
 		if tile == null:
