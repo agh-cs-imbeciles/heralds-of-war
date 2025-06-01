@@ -83,7 +83,6 @@ func place_unit(player: String, map_position: Vector2i) -> void:
 func __instantiate_swordsman(player: String, map_position: Vector2i) -> Unit:
 	var swordsman: Unit = swordsman_scene.instantiate()
 	swordsman.board = __match.board
-	swordsman.board_tile_map = __match.board.tile_map
 	swordsman.initial_stamina = 60
 	swordsman.initial_health = 100
 	swordsman.initial_attack_strength = 50
