@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=4 uid="uid://bw4ys7cn1q7an"]
+[gd_scene load_steps=14 format=4 uid="uid://bw4ys7cn1q7an"]
 
 [ext_resource type="Script" uid="uid://orar4yfbku55" path="res://src/ui/camera.gd" id="1_5vgm2"]
 [ext_resource type="Script" uid="uid://ctumvccgx6tl8" path="res://src/game/match.gd" id="1_dvtnx"]
@@ -8,8 +8,9 @@
 [ext_resource type="Shader" uid="uid://d3nwj71uk3tm" path="res://shaders/darkened_blur.gdshader" id="2_xch1l"]
 [ext_resource type="TileSet" uid="uid://xd0jqo1f7ya4" path="res://assets/resources/terrain_tileset.tres" id="3_dvtnx"]
 [ext_resource type="Script" uid="uid://b178hqhf1fe6f" path="res://src/game/board/board.gd" id="3_g0v03"]
+[ext_resource type="PackedScene" uid="uid://cye7jc7718cxh" path="res://scenes/ui/game/player_turn_display.tscn" id="5_nvtrm"]
 [ext_resource type="Script" uid="uid://i3exemmdxb6d" path="res://src/game/board/board_input_manager.gd" id="6_u5ntg"]
-[ext_resource type="Script" uid="uid://c0mx0vvijq1vj" path="res://src/game/board/board_tile_map.gd" id="6_xch1l"]
+[ext_resource type="Script" path="res://src/game/board/board_tile_map.gd" id="6_xch1l"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_plr6o"]
 shader = ExtResource("2_xch1l")
@@ -42,6 +43,17 @@ theme_override_styles/panel = SubResource("StyleBoxFlat_toqnb")
 
 [node name="EndGameModal" parent="MatchUi/UiCanvasLayer/EndGamePanel" instance=ExtResource("2_u5ntg")]
 layout_mode = 1
+
+[node name="PlayerTurnDisplay" parent="MatchUi/UiCanvasLayer" instance=ExtResource("5_nvtrm")]
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.0
+offset_left = 20.0
+offset_top = 10.0
+offset_right = -20.0
+offset_bottom = 10.0
+grow_vertical = 0
 
 [node name="BoardGridTileMap" type="TileMapLayer" parent="MatchUi"]
 modulate = Color(0.23552, 0.24, 0.1728, 0.0627451)

@@ -1,0 +1,26 @@
+[gd_scene load_steps=3 format=3 uid="uid://cye7jc7718cxh"]
+
+[ext_resource type="Theme" uid="uid://b0yl85gha4apv" path="res://themes/main_theme.tres" id="1_kt5lm"]
+[ext_resource type="Script" uid="uid://lixol5ecwd82" path="res://src/ui/game/player_turn_display.gd" id="2_l6snk"]
+
+[node name="PlayerTurnDisplay" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme = ExtResource("1_kt5lm")
+script = ExtResource("2_l6snk")
+
+[node name="LabelContainer" type="HBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 5
+alignment = 1
