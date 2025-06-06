@@ -58,11 +58,13 @@ func __on_cell_pressed(cell_position: Vector2i, button: MouseButton) -> void:
 	if button not in [MOUSE_BUTTON_LEFT, MOUSE_BUTTON_RIGHT]:
 		return
 
-	if current_unit_state != UnitState.UNSELECTED and button == MOUSE_BUTTON_RIGHT:
+	var is_cell_selected := current_unit_state == UnitState.UNSELECTED
+	if is_cell_selected and button == MOUSE_BUTTON_RIGHT:
 		unfocus_unit()
 		return
 
-	# We are sure that in states `SELECTED` and `ATTACK_SELECTED` only input is `MOUSE_BUTTON_LEFT`
+	# We are sure that in states `SELECTED` and `ATTACK_SELECTED` only input is
+	# `MOUSE_BUTTON_LEFT`
 	match(current_unit_state):
 		UnitState.SELECTED:
 			if focused_unit.can_move(cell_position):
