@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://chotpswhlkwwg" path="res://scenes/ui/menu/match_select.tscn" id="3_r4xos"]
 
 [node name="MainMenu" type="Control"]
+process_mode = 3
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -19,6 +20,7 @@ anchors_preset = -1
 anchor_top = 0.4
 anchor_right = 1.0
 anchor_bottom = 0.6
+offset_bottom = 14.8
 grow_horizontal = 2
 grow_vertical = 2
 ratio = 2.0
@@ -41,7 +43,6 @@ theme = ExtResource("2_r4xos")
 text = "EXIT GAME"
 script = ExtResource("3_ldhvw")
 
-[connection signal="pressed" from="AspectRatioContainer/VBoxContainer/StartGameButton" to="AspectRatioContainer/VBoxContainer/StartGameButton" method="__change_scene"]
 [connection signal="resized" from="AspectRatioContainer/VBoxContainer/StartGameButton" to="AspectRatioContainer/VBoxContainer/StartGameButton" method="__resize_font"]
 [connection signal="pressed" from="AspectRatioContainer/VBoxContainer/ExitGameButton" to="AspectRatioContainer/VBoxContainer/ExitGameButton" method="__exit_game"]
 [connection signal="resized" from="AspectRatioContainer/VBoxContainer/ExitGameButton" to="AspectRatioContainer/VBoxContainer/ExitGameButton" method="__resize_font"]

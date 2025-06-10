@@ -1,6 +1,4 @@
-extends TileMapLayer
-
-class_name Board
+class_name Board extends Node2D
 
 signal unit_added(unit: Unit)
 
@@ -8,8 +6,9 @@ var cost: Dictionary[String, int] = {}
 var units: Dictionary[String, Variant] = {}
 var path_finder: AStar2D = AStar2D.new()
 
-@onready var input_manager: BoardInputManager = $"BoardInputManager"
-@onready var unit_node_container: Node = $"Units"
+@onready var input_manager: BoardInputManager = $"./BoardInputManager"
+@onready var unit_node_container: Node = $"./Units"
+@onready var tile_map: BoardTileMap = $"./BoardTileMap"
 
 
 func _ready() -> void:
@@ -37,28 +36,28 @@ func load_board_cost() -> void:
 
 
 func init_path_finder() -> void:
-	for cell in get_used_cells():
+	for cell in tile_map.get_used_cells():
 		var i = get_cell_id(cell)
 		path_finder.add_point(i, cell, get_cell_cost(cell))
 
-	for cell in get_used_cells():
+	for cell in tile_map.get_used_cells():
 		var i = get_cell_id(cell)
-		for surrounding_cell in get_surrounding_cells(cell):
-			if not get_used_rect().has_point(surrounding_cell):
+		for surrounding_cell in tile_map.get_surrounding_cells(cell):
+			if not tile_map.get_used_rect().has_point(surrounding_cell):
 				continue
 			var j = get_cell_id(surrounding_cell)
 			path_finder.connect_points(i, j)
 
 
 func get_cell_cost(map_index: Vector2i) -> int:
-	var atlas_coords = get_cell_atlas_coords(map_index)
+	var atlas_coords = tile_map.get_cell_atlas_coords(map_index)
 	var coord_key = VectorUtils.vector2i_to_string(atlas_coords)
 	return cost.get(coord_key, Global.CELL_COST_INFINITY)
 
 
 func get_cell_id(map_index: Vector2i) -> int:
-		var max_index = get_used_rect().size.max_axis_index()
-		var max_axis_value = get_used_rect().size[max_index]
+		var max_index = tile_map.get_used_rect().size.max_axis_index()
+		var max_axis_value = tile_map.get_used_rect().size[max_index]
 		var max_axis_value_power_10 = 10**ceili(log(max_axis_value) / log(10))
 
 		return max_axis_value_power_10 * map_index.x + map_index.y
@@ -120,7 +119,7 @@ func get_nearest_cells(center: Vector2i, max_distance: int) -> Array[Vector2i]:
 	for i in range(-max_distance - 1, max_distance + 2):
 		for j in range(-max_distance - 1, max_distance + 2):
 			var cell := center + Vector2i(i, j)
-			if cell in get_used_cells():
+			if cell in tile_map.get_used_cells():
 				square_cells.append(cell)
 
 	return square_cells

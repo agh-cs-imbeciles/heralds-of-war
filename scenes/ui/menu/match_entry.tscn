@@ -5,6 +5,7 @@
 [ext_resource type="Theme" uid="uid://b0yl85gha4apv" path="res://themes/main_theme.tres" id="2_od57r"]
 
 [node name="MatchEntry" type="Control"]
+process_mode = 3
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -27,5 +28,4 @@ script = ExtResource("2_cw6wu")
 
 [connection signal="property_list_changed" from="." to="." method="_on_property_list_changed"]
 [connection signal="ready" from="." to="." method="_on_ready"]
-[connection signal="pressed" from="Button" to="Button" method="__change_scene"]
 [connection signal="resized" from="Button" to="Button" method="__resize_font"]
