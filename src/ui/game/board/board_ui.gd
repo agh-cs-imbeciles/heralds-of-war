@@ -83,6 +83,7 @@ func __on_board_ready() -> void:
 func __on_unit_added(unit: Unit) -> void:
 	unit.moved.connect(__on_unit_moved)
 	unit.died.connect(__on_unit_died)
+
 	set_unit_z_index(unit)
 	add_player_unit_tile(unit)
 
