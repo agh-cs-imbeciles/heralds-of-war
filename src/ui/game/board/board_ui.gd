@@ -54,11 +54,12 @@ func __on_board_ready() -> void:
 func __on_unit_added(unit: Unit) -> void:
 	unit.moved.connect(__on_unit_moved)
 	unit.died.connect(__on_unit_died)
-
+	set_unit_z_index(unit)
 	add_player_unit_tile(unit)
 
 
 func __on_unit_moved(unit: Unit, from: Vector2i) -> void:
+	set_unit_z_index(unit)
 	update_player_unit_tile(unit, from)
 
 
@@ -176,6 +177,10 @@ func __instantiate_highlight_tile(tile_type: HighlightTile) -> Sprite2D:
 	return tile
 
 
+func set_unit_z_index(unit: Unit) -> void:
+	unit.z_index = get_position_z_index(unit.map_position)
+
+
 func render_hover(hover_position: Vector2) -> void:
 	if __hover_tile.hidden:
 		__hover_tile.show()
@@ -253,3 +258,7 @@ func remove_player_unit_tile(unit: Unit) -> void:
 
 	remove_child(tile)
 	__player_unit_tiles.erase(map_position_key)
+
+
+func get_position_z_index(map_position: Vector2i) -> int:
+	return map_position.y * map_position.x + Global.MIN_UNIT_Z_INDEX
