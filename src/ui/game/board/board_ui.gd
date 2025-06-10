@@ -241,7 +241,6 @@ func set_unit_z_index(unit: Unit) -> void:
 	unit.z_index = get_position_z_index(unit.map_position)
 
 
-
 func hide_player_tile_maps() -> void:
 	for tile_map in __board.tile_map.team_tiles:
 		tile_map.hide()
