@@ -1,10 +1,13 @@
 class_name BoardUi extends Node2D
 
+enum HighlightTile { HOVER, FOCUS, MOVE, ATTACK, ATTACK_MOVE, COMMITTED_UNIT }
+var UnitState = MatchPlayManager.UnitState
+
+@export var unit_min_z_index = 128
+
 @onready var __match: Match = $"../.."
 @onready var __board: Board = $"../../Board"
 
-enum HighlightTile { HOVER, FOCUS, MOVE, ATTACK, ATTACK_MOVE, COMMITTED_UNIT }
-var UnitState = MatchPlayManager.UnitState
 
 var highlight_tile_scene: PackedScene = preload(
 	"res://scenes/ui/game/board/highlight_tile.tscn"
@@ -239,7 +242,7 @@ func __instantiate_highlight_tile(tile_type: HighlightTile) -> Sprite2D:
 
 
 func set_unit_z_index(unit: Unit) -> void:
-	unit.z_index = get_position_z_index(unit.map_position)
+	unit.z_index = get_unit_z_index(unit.map_position)
 
 
 func hide_player_tile_maps() -> void:
@@ -332,5 +335,8 @@ func remove_player_unit_tile(unit: Unit) -> void:
 	__player_unit_tiles.erase(map_position_key)
 
 
-func get_position_z_index(map_position: Vector2i) -> int:
-	return map_position.y * map_position.x + Global.MIN_UNIT_Z_INDEX
+func get_unit_z_index(map_position: Vector2i) -> int:
+	var board_rect := __board.tile_map.get_used_rect()
+	return map_position.y * board_rect.size.y \
+		+ map_position.x \
+		+ unit_min_z_index
