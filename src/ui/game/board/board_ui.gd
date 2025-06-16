@@ -3,7 +3,7 @@ class_name BoardUi extends Node2D
 enum HighlightTile { HOVER, FOCUS, MOVE, ATTACK, ATTACK_MOVE, COMMITTED_UNIT }
 var UnitState = MatchPlayManager.UnitState
 
-@export var unit_min_z_index = 128
+@export var min_z_index = 128
 
 @onready var __match: Match = $"../.."
 @onready var __board: Board = $"../../Board"
@@ -81,6 +81,7 @@ func __on_board_ready() -> void:
 	__board.input_manager.mouse_left_board.connect(__on_mouse_left_board)
 
 	hide_player_tile_maps()
+	set_obstacle_z_indicies()
 
 
 func __on_unit_added(unit: Unit) -> void:
@@ -242,7 +243,7 @@ func __instantiate_highlight_tile(tile_type: HighlightTile) -> Sprite2D:
 
 
 func set_unit_z_index(unit: Unit) -> void:
-	unit.z_index = get_unit_z_index(unit.map_position)
+	unit.z_index = get_tile_z_index(unit.map_position)
 
 
 func hide_player_tile_maps() -> void:
@@ -250,10 +251,22 @@ func hide_player_tile_maps() -> void:
 		tile_map.hide()
 
 
+func set_obstacle_z_indicies() -> void:
+	for coords in __board.obstacle_tile_map.get_used_cells():
+		__board.obstacle_tile_map.set_cell_z_index(
+			coords,
+			get_tile_z_index(coords),
+		)
+	__board.obstacle_tile_map.notify_runtime_tile_data_update()
+
+
 func set_cells_color(cells: Array[Vector2i], color: Color) -> void:
 	for cell in cells:
 		__board.tile_map.set_cell_color(cell, color)
+		__board.obstacle_tile_map.set_cell_color(cell, color)
+
 	__board.tile_map.notify_runtime_tile_data_update()
+	__board.obstacle_tile_map.notify_runtime_tile_data_update()
 
 
 func render_hover(hover_position: Vector2) -> void:
@@ -335,8 +348,8 @@ func remove_player_unit_tile(unit: Unit) -> void:
 	__player_unit_tiles.erase(map_position_key)
 
 
-func get_unit_z_index(map_position: Vector2i) -> int:
+func get_tile_z_index(map_position: Vector2i) -> int:
 	var board_rect := __board.tile_map.get_used_rect()
 	return map_position.y * board_rect.size.y \
 		+ map_position.x \
-		+ unit_min_z_index
+		+ min_z_index
