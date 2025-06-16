@@ -26,6 +26,10 @@ process_mode = 1
 script = ExtResource("1_dvtnx")
 match_name = "Match 1"
 
+[node name="BackgroundTileMapTop" type="TileMapLayer" parent="."]
+modulate = Color(0.3, 0.3, 0.3, 1)
+tile_set = ExtResource("3_dvtnx")
+
 [node name="MatchUi" type="Node" parent="."]
 script = ExtResource("2_plr6o")
 
@@ -119,3 +123,7 @@ script = ExtResource("6_u5ntg")
 metadata/_custom_type_script = "uid://i3exemmdxb6d"
 
 [node name="Units" type="Node2D" parent="Board"]
+
+[node name="BackgroundTileMapBottom" type="TileMapLayer" parent="."]
+modulate = Color(0.3, 0.3, 0.3, 1)
+tile_set = ExtResource("3_dvtnx")
