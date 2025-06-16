@@ -87,8 +87,8 @@ func _create_background() -> void:
 			var target_pattern: TileMapPattern
 			
 			# Choose the right pattern based on grid position
-			var flip_h = (i != 0)
-			var flip_v = (j != 0)
+			var flip_h = (i % 2 != 0)
+			var flip_v = (j % 2 != 0)
 			
 			match [flip_h, flip_v]:
 				[true, true]:
