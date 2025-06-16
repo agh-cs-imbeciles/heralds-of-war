@@ -1,4 +1,4 @@
-class_name BoardObstacleTileMap extends TileMapLayer
+class_name StandardTileMap extends TileMapLayer
 
 var __tile_update_functions: Dictionary[Vector2i, Callable] = {}
 
