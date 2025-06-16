@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=4 uid="uid://bw4ys7cn1q7an"]
+[gd_scene load_steps=14 format=4 uid="uid://bw4ys7cn1q7an"]
 
 [ext_resource type="Script" uid="uid://orar4yfbku55" path="res://src/ui/camera.gd" id="1_5vgm2"]
 [ext_resource type="Script" uid="uid://ctumvccgx6tl8" path="res://src/game/match.gd" id="1_dvtnx"]
@@ -9,7 +9,8 @@
 [ext_resource type="TileSet" uid="uid://xd0jqo1f7ya4" path="res://assets/resources/terrain_tileset.tres" id="3_dvtnx"]
 [ext_resource type="Script" uid="uid://b178hqhf1fe6f" path="res://src/game/board/board.gd" id="3_g0v03"]
 [ext_resource type="Script" uid="uid://i3exemmdxb6d" path="res://src/game/board/board_input_manager.gd" id="6_u5ntg"]
-[ext_resource type="Script" uid="uid://c0mx0vvijq1vj" path="res://src/game/board/board_tile_map.gd" id="6_xch1l"]
+[ext_resource type="Script" uid="uid://cgpanl31l6m4r" path="res://src/game/board/board_tile_map.gd" id="6_xch1l"]
+[ext_resource type="Script" uid="uid://bruhbofycekue" path="res://src/standard_tile_map.gd" id="10_nvtrm"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_plr6o"]
 shader = ExtResource("2_xch1l")
@@ -67,6 +68,11 @@ tile_map_data = PackedByteArray("AAAAAAAAAAABAAIAAAAAAAEAAAABAAIAAAAAAAIAAAABAAI
 tile_set = ExtResource("3_dvtnx")
 script = ExtResource("6_xch1l")
 
+[node name="ObstacleTileMap" type="TileMapLayer" parent="Board/BoardTileMap"]
+tile_map_data = PackedByteArray("AAAOAAUAAQAAAAAAAAAUAAAAAAAKAAQAAAADAA4AAAAFAAQAAAARAAUAAAAEAAQAAAADAA8AAQAJAAEAAAAEAA4AAAAIAAQAAAA=")
+tile_set = ExtResource("3_dvtnx")
+script = ExtResource("10_nvtrm")
+
 [node name="PlayerA" type="TileMapLayer" parent="Board/BoardTileMap"]
 modulate = Color(0.1, 0.85, 1, 0.235294)
 z_index = 128
@@ -89,4 +95,4 @@ metadata/Team = "B"
 script = ExtResource("6_u5ntg")
 metadata/_custom_type_script = "uid://i3exemmdxb6d"
 
-[node name="Units" type="Node" parent="Board"]
+[node name="Units" type="Node2D" parent="Board"]

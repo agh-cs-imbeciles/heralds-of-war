@@ -43,9 +43,9 @@ func __on_phase_changed(phase: Match.Phase) -> void:
 func __on_cell_pressed(cell_position: Vector2i, button: MouseButton) -> void:
 	if button != MOUSE_BUTTON_LEFT:
 		return
-
-	var unit := __board.get_unit(cell_position)
-	if unit is Unit:
+	if __board.get_unit(cell_position) is Unit:
+		return
+	if __board.is_obstacle_at(cell_position):
 		return
 
 	var player := __players[__current_player_index]
