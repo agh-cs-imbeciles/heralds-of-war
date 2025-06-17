@@ -1,6 +1,7 @@
 class_name Board extends Node2D
 
 signal unit_added(unit: Unit)
+signal unit_died(unit: Unit)
 
 var cost: Dictionary[String, int] = {}
 var units: Dictionary[String, Variant] = {}
@@ -80,6 +81,7 @@ func get_unit(map_index: Vector2i) -> Unit:
 
 func add_unit(unit: Unit) -> void:
 	unit.moved.connect(__on_unit_moved)
+	unit.died.connect(__on_unit_died)
 	units[unit.player].append(unit)
 	update_cell_cost(unit.map_position, Global.CELL_COST_INFINITY)
 
@@ -89,6 +91,10 @@ func add_unit(unit: Unit) -> void:
 func __on_unit_moved(unit: Unit, from: Vector2i) -> void:
 	update_cell_cost(from, get_cell_cost(from))
 	update_cell_cost(unit.map_position, Global.CELL_COST_INFINITY)
+
+
+func __on_unit_died(unit: Unit) -> void:
+	unit_died.emit(unit)
 
 
 func remove_unit(unit: Unit) -> void:
