@@ -1,6 +1,7 @@
 class_name Board extends Node2D
 
 signal unit_added(unit: Unit)
+signal unit_died(unit: Unit)
 
 var cost: Dictionary[String, int] = {}
 var units: Dictionary[String, Variant] = {}
@@ -9,6 +10,8 @@ var path_finder: AStar2D = AStar2D.new()
 @onready var input_manager: BoardInputManager = $"./BoardInputManager"
 @onready var unit_node_container: Node = $"./Units"
 @onready var tile_map: BoardTileMap = $"./BoardTileMap"
+@onready var obstacle_tile_map: StandardTileMap \
+	= $"./BoardTileMap/ObstacleTileMap"
 
 
 func _ready() -> void:
@@ -50,6 +53,9 @@ func init_path_finder() -> void:
 
 
 func get_cell_cost(map_index: Vector2i) -> int:
+	if obstacle_tile_map.get_cell_tile_data(map_index):
+		return Global.CELL_COST_INFINITY
+
 	var atlas_coords = tile_map.get_cell_atlas_coords(map_index)
 	var coord_key = VectorUtils.vector2i_to_string(atlas_coords)
 	return cost.get(coord_key, Global.CELL_COST_INFINITY)
@@ -75,6 +81,7 @@ func get_unit(map_index: Vector2i) -> Unit:
 
 func add_unit(unit: Unit) -> void:
 	unit.moved.connect(__on_unit_moved)
+	unit.died.connect(__on_unit_died)
 	units[unit.player].append(unit)
 	update_cell_cost(unit.map_position, Global.CELL_COST_INFINITY)
 
@@ -84,6 +91,10 @@ func add_unit(unit: Unit) -> void:
 func __on_unit_moved(unit: Unit, from: Vector2i) -> void:
 	update_cell_cost(from, get_cell_cost(from))
 	update_cell_cost(unit.map_position, Global.CELL_COST_INFINITY)
+
+
+func __on_unit_died(unit: Unit) -> void:
+	unit_died.emit(unit)
 
 
 func remove_unit(unit: Unit) -> void:
@@ -106,6 +117,10 @@ func get_player_unit_count() -> Dictionary[String, int]:
 		player_unit_count[player] = units[player].size()
 
 	return player_unit_count
+
+
+func is_obstacle_at(map_index: Vector2i) -> bool:
+	return obstacle_tile_map.get_cell_tile_data(map_index) != null
 
 
 func update_cell_cost(map_index: Vector2i, new_cost: float) -> void:

@@ -22,8 +22,13 @@ func _init(m: Match) -> void:
 	ordering_manager = MatchOrderingManager.new(m)
 	__players = m.players
 
+	__init_signal_connections()
+
+
+func __init_signal_connections() -> void:
 	__match.turn_ended.connect(__on_turn_ended)
 	__match.phase_manager.phase_changed.connect(__on_phase_changed)
+	__board.unit_died.connect(__on_unit_died)
 	ordering_manager.sequence_exhausted.connect(__on_sequence_exhausted)
 
 
@@ -45,7 +50,7 @@ func __on_phase_changed(phase: Match.Phase) -> void:
 			__board.input_manager.cell_pressed.disconnect(__on_cell_pressed)
 		return
 
-	__init_signal_connections()
+	__board.input_manager.cell_pressed.connect(__on_cell_pressed)
 
 	print("== Play Phase ==")
 
@@ -58,11 +63,13 @@ func __on_cell_pressed(cell_position: Vector2i, button: MouseButton) -> void:
 	if button not in [MOUSE_BUTTON_LEFT, MOUSE_BUTTON_RIGHT]:
 		return
 
-	if current_unit_state != UnitState.UNSELECTED and button == MOUSE_BUTTON_RIGHT:
+	var is_cell_selected := current_unit_state != UnitState.UNSELECTED
+	if is_cell_selected and button == MOUSE_BUTTON_RIGHT:
 		unfocus_unit()
 		return
 
-	# We are sure that in states `SELECTED` and `ATTACK_SELECTED` only input is `MOUSE_BUTTON_LEFT`
+	# We are sure that in states `SELECTED` and `ATTACK_SELECTED` only input is
+	# `MOUSE_BUTTON_LEFT`
 	match(current_unit_state):
 		UnitState.SELECTED:
 			if focused_unit.can_move(cell_position):
@@ -81,14 +88,6 @@ func __on_cell_pressed(cell_position: Vector2i, button: MouseButton) -> void:
 					focus_unit(unit, UnitState.SELECTED)
 				elif button == MOUSE_BUTTON_RIGHT:
 					focus_unit(unit, UnitState.ATTACK_SELECTED)
-
-
-func __init_signal_connections() -> void:
-	__board.input_manager.cell_pressed.connect(__on_cell_pressed)
-
-	for player in __players:
-		for unit in __board.units[player]:
-			unit.died.connect(__on_unit_died)
 
 
 func __on_unit_died(unit: Unit) -> void:

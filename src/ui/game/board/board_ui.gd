@@ -1,10 +1,13 @@
 class_name BoardUi extends Node2D
 
+enum HighlightTile { HOVER, FOCUS, MOVE, ATTACK, ATTACK_MOVE, COMMITTED_UNIT }
+var UnitState = MatchPlayManager.UnitState
+
+@export var min_z_index = 128
+
 @onready var __match: Match = $"../.."
 @onready var __board: Board = $"../../Board"
 
-enum HighlightTile { HOVER, FOCUS, MOVE, ATTACK, ATTACK_MOVE, COMMITTED_UNIT }
-var UnitState = MatchPlayManager.UnitState
 
 var highlight_tile_scene: PackedScene = preload(
 	"res://scenes/ui/game/board/highlight_tile.tscn"
@@ -75,19 +78,22 @@ func darken_player_cells(player: String) -> void:
 
 func __on_board_ready() -> void:
 	__board.unit_added.connect(__on_unit_added)
+	__board.unit_died.connect(__on_unit_died)
 	__board.input_manager.mouse_left_board.connect(__on_mouse_left_board)
 
 	hide_player_tile_maps()
+	set_obstacle_z_indicies()
 
 
 func __on_unit_added(unit: Unit) -> void:
 	unit.moved.connect(__on_unit_moved)
-	unit.died.connect(__on_unit_died)
 
+	set_unit_z_index(unit)
 	add_player_unit_tile(unit)
 
 
 func __on_unit_moved(unit: Unit, from: Vector2i) -> void:
+	set_unit_z_index(unit)
 	update_player_unit_tile(unit, from)
 
 
@@ -143,7 +149,10 @@ func __on_sequence_advanced(
 	highlight_player_units(player)
 
 
-func __on_unit_focused(unit: Unit, unit_state: MatchPlayManager.UnitState) -> void:
+func __on_unit_focused(
+	unit: Unit,
+	unit_state: MatchPlayManager.UnitState,
+) -> void:
 	render_focus(__board.tile_map.map_to_local(unit.map_position))
 
 	var marked_cells: Array[Vector2]
@@ -158,8 +167,11 @@ func __on_unit_focused(unit: Unit, unit_state: MatchPlayManager.UnitState) -> vo
 		render_marked_cells(marked_cells, HighlightTile.ATTACK)
 
 		if is_instance_of(unit, MeleeUnit):
-			var move_attackable_cells: Array[Vector2i] = unit.get_attacks_after_move()
-			move_attackable_cells = move_attackable_cells.filter(func(x): return not attackable_cells.has(x))
+			var move_attackable_cells: Array[Vector2i] \
+				= unit.get_attacks_after_move()
+			move_attackable_cells = move_attackable_cells.filter(
+				func(x): return not attackable_cells.has(x)
+			)
 			marked_cells.assign(
 				move_attackable_cells.map(__board.tile_map.map_to_local)
 			)
@@ -234,15 +246,31 @@ func __instantiate_highlight_tile(tile_type: HighlightTile) -> Sprite2D:
 	return tile
 
 
+func set_unit_z_index(unit: Unit) -> void:
+	unit.z_index = get_tile_z_index(unit.map_position)
+
+
 func hide_player_tile_maps() -> void:
 	for tile_map in __board.tile_map.team_tiles:
 		tile_map.hide()
 
 
+func set_obstacle_z_indicies() -> void:
+	for coords in __board.obstacle_tile_map.get_used_cells():
+		__board.obstacle_tile_map.set_cell_z_index(
+			coords,
+			get_tile_z_index(coords),
+		)
+	__board.obstacle_tile_map.notify_runtime_tile_data_update()
+
+
 func set_cells_color(cells: Array[Vector2i], color: Color) -> void:
 	for cell in cells:
 		__board.tile_map.set_cell_color(cell, color)
+		__board.obstacle_tile_map.set_cell_color(cell, color)
+
 	__board.tile_map.notify_runtime_tile_data_update()
+	__board.obstacle_tile_map.notify_runtime_tile_data_update()
 
 
 func render_hover(hover_position: Vector2) -> void:
@@ -322,3 +350,10 @@ func remove_player_unit_tile(unit: Unit) -> void:
 
 	remove_child(tile)
 	__player_unit_tiles.erase(map_position_key)
+
+
+func get_tile_z_index(map_position: Vector2i) -> int:
+	var board_rect := __board.tile_map.get_used_rect()
+	return map_position.y * board_rect.size.y \
+		+ map_position.x \
+		+ min_z_index
