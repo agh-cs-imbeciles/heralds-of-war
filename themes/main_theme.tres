@@ -1,8 +1,17 @@
-[gd_resource type="Theme" load_steps=11 format=3 uid="uid://b0yl85gha4apv"]
+[gd_resource type="Theme" load_steps=13 format=3 uid="uid://b0yl85gha4apv"]
 
+[ext_resource type="Texture2D" uid="uid://dbmjs3pe25iqf" path="res://assets/ui/Box.png" id="1_8gw6x"]
 [ext_resource type="FontFile" uid="uid://w8gtmlejd3ia" path="res://assets/fonts/ThaleahFat.ttf" id="1_funo8"]
 [ext_resource type="Texture2D" uid="uid://cc4plju0f84uq" path="res://assets/ui/RectangleBox_96x96.png" id="1_vu6l5"]
 [ext_resource type="Texture2D" uid="uid://b3mgt8dvd4l82" path="res://assets/ui/Button_52x14.png" id="2_8gw6x"]
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_s5e0q"]
+texture = ExtResource("1_8gw6x")
+texture_margin_left = 7.0
+texture_margin_top = 7.0
+texture_margin_right = 7.0
+texture_margin_bottom = 7.0
+region_rect = Rect2(0, 0, 34, 34)
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_8gw6x"]
 texture = ExtResource("2_8gw6x")
@@ -61,6 +70,8 @@ texture_margin_bottom = 12.0
 [resource]
 resource_name = "main_theme"
 default_font = ExtResource("1_funo8")
+Box/base_type = &"Panel"
+Box/styles/panel = SubResource("StyleBoxTexture_s5e0q")
 Button/colors/font_color = Color(0.984546, 0.984547, 0.984546, 1)
 Button/styles/disabled = SubResource("StyleBoxTexture_8gw6x")
 Button/styles/focus = SubResource("StyleBoxTexture_uobgu")

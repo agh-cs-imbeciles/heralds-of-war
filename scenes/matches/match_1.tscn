@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=4 uid="uid://bw4ys7cn1q7an"]
+[gd_scene load_steps=15 format=4 uid="uid://bw4ys7cn1q7an"]
 
 [ext_resource type="Script" uid="uid://orar4yfbku55" path="res://src/ui/camera.gd" id="1_5vgm2"]
 [ext_resource type="Script" uid="uid://ctumvccgx6tl8" path="res://src/game/match.gd" id="1_dvtnx"]
@@ -8,6 +8,7 @@
 [ext_resource type="Shader" uid="uid://d3nwj71uk3tm" path="res://shaders/darkened_blur.gdshader" id="2_xch1l"]
 [ext_resource type="TileSet" uid="uid://xd0jqo1f7ya4" path="res://assets/resources/terrain_tileset.tres" id="3_dvtnx"]
 [ext_resource type="Script" uid="uid://b178hqhf1fe6f" path="res://src/game/board/board.gd" id="3_g0v03"]
+[ext_resource type="PackedScene" uid="uid://b8estsdk5duw1" path="res://scenes/ui/game/turn/player_turn_display.tscn" id="5_nvtrm"]
 [ext_resource type="Script" uid="uid://i3exemmdxb6d" path="res://src/game/board/board_input_manager.gd" id="6_u5ntg"]
 [ext_resource type="Script" uid="uid://cgpanl31l6m4r" path="res://src/game/board/board_tile_map.gd" id="6_xch1l"]
 [ext_resource type="Script" uid="uid://bruhbofycekue" path="res://src/standard_tile_map.gd" id="10_nvtrm"]
@@ -30,6 +31,28 @@ script = ExtResource("2_plr6o")
 
 [node name="UiCanvasLayer" type="CanvasLayer" parent="MatchUi"]
 process_mode = 3
+
+[node name="MarginContainer" type="MarginContainer" parent="MatchUi/UiCanvasLayer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 24
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 24
+theme_override_constants/margin_bottom = 12
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MatchUi/UiCanvasLayer/MarginContainer"]
+layout_mode = 2
+
+[node name="BoxContainer" type="BoxContainer" parent="MatchUi/UiCanvasLayer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="PlayerTurnDisplay" parent="MatchUi/UiCanvasLayer/MarginContainer/VBoxContainer" instance=ExtResource("5_nvtrm")]
+layout_mode = 2
+size_flags_vertical = 1
 
 [node name="EndGamePanel" type="Panel" parent="MatchUi/UiCanvasLayer"]
 visible = false

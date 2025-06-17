@@ -92,6 +92,7 @@ func __on_cell_pressed(cell_position: Vector2i, button: MouseButton) -> void:
 
 func __on_unit_died(unit: Unit) -> void:
 	__board.remove_unit(unit)
+	ordering_manager.readjust_sequence()
 
 	if __board.units[unit.player].size() == 0:
 		match_ended.emit("A" if unit.player == "B" else "B")

@@ -1,0 +1,76 @@
+[gd_scene load_steps=5 format=3 uid="uid://cccdvxiid26ye"]
+
+[ext_resource type="Script" uid="uid://bdaojvyulwc7t" path="res://src/ui/game/turn/sequence_item.gd" id="1_72h11"]
+[ext_resource type="Texture2D" uid="uid://dbmjs3pe25iqf" path="res://assets/ui/Box.png" id="1_ux68p"]
+[ext_resource type="Theme" uid="uid://b0yl85gha4apv" path="res://themes/main_theme.tres" id="3_th8j5"]
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_72h11"]
+texture = ExtResource("1_ux68p")
+texture_margin_left = 7.0
+texture_margin_top = 7.0
+texture_margin_right = 7.0
+texture_margin_bottom = 7.0
+region_rect = Rect2(34, 0, 34, 34)
+
+[node name="SequenceItem" type="Control"]
+custom_minimum_size = Vector2(27, 27)
+layout_mode = 3
+anchors_preset = 0
+offset_right = 25.0
+offset_bottom = 25.0
+script = ExtResource("1_72h11")
+
+[node name="Background" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Background" type="ColorRect" parent="Background"]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 4.0
+offset_top = 4.0
+offset_right = -4.0
+offset_bottom = -4.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.341176, 0.282353, 0.321569, 1)
+
+[node name="Border" type="Panel" parent="Background"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxTexture_72h11")
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 9
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 8
+
+[node name="PlayerLabel" type="Label" parent="MarginContainer"]
+layout_mode = 2
+theme = ExtResource("3_th8j5")
+theme_override_colors/font_color = Color(0.962572, 0.927021, 0.950643, 1)
+theme_override_colors/font_shadow_color = Color(0.294118, 0.239216, 0.266667, 1)
+theme_override_constants/shadow_offset_x = 1
+theme_override_constants/shadow_offset_y = 0
+theme_override_constants/shadow_outline_size = 1
+theme_override_font_sizes/font_size = 18
+text = "A"
+horizontal_alignment = 1
+vertical_alignment = 1
