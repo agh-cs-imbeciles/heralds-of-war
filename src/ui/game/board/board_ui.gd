@@ -135,7 +135,11 @@ func __on_phase_changed(phase: Match.Phase) -> void:
 		highlight_player_units(__match.get_current_player())
 
 
-func __on_sequence_advanced(player: String) -> void:
+func __on_sequence_advanced(
+	_sequence: Array[String],
+	_sequence_index: int,
+	player: String,
+) -> void:
 	highlight_player_units(player)
 
 
