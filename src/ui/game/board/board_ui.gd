@@ -78,6 +78,7 @@ func darken_player_cells(player: String) -> void:
 
 func __on_board_ready() -> void:
 	__board.unit_added.connect(__on_unit_added)
+	__board.unit_died.connect(__on_unit_died)
 	__board.input_manager.mouse_left_board.connect(__on_mouse_left_board)
 
 	hide_player_tile_maps()
@@ -86,7 +87,6 @@ func __on_board_ready() -> void:
 
 func __on_unit_added(unit: Unit) -> void:
 	unit.moved.connect(__on_unit_moved)
-	unit.died.connect(__on_unit_died)
 
 	set_unit_z_index(unit)
 	add_player_unit_tile(unit)
