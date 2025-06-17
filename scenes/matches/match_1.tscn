@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://orar4yfbku55" path="res://src/ui/camera.gd" id="1_5vgm2"]
 [ext_resource type="Script" uid="uid://ctumvccgx6tl8" path="res://src/game/match.gd" id="1_dvtnx"]
 [ext_resource type="Script" uid="uid://b5lfouqrpasn3" path="res://src/ui/game/board/board_ui.gd" id="2_f4xsg"]
-[ext_resource type="Script" uid="uid://d21vpkqujjyl2" path="res://src/ui/game/match_ui.gd" id="2_plr6o"]
+[ext_resource type="Script" path="res://src/ui/game/match_ui.gd" id="2_plr6o"]
 [ext_resource type="PackedScene" uid="uid://cvrfa8432srf0" path="res://scenes/ui/game/end_game_modal.tscn" id="2_u5ntg"]
 [ext_resource type="Shader" uid="uid://d3nwj71uk3tm" path="res://shaders/darkened_blur.gdshader" id="2_xch1l"]
 [ext_resource type="TileSet" uid="uid://xd0jqo1f7ya4" path="res://assets/resources/terrain_tileset.tres" id="3_dvtnx"]
@@ -11,7 +11,7 @@
 [ext_resource type="PackedScene" uid="uid://b8estsdk5duw1" path="res://scenes/ui/game/turn/player_turn_display.tscn" id="5_nvtrm"]
 [ext_resource type="Script" uid="uid://i3exemmdxb6d" path="res://src/game/board/board_input_manager.gd" id="6_u5ntg"]
 [ext_resource type="Script" uid="uid://cgpanl31l6m4r" path="res://src/game/board/board_tile_map.gd" id="6_xch1l"]
-[ext_resource type="Script" uid="uid://bruhbofycekue" path="res://src/standard_tile_map.gd" id="10_nvtrm"]
+[ext_resource type="Script" path="res://src/standard_tile_map.gd" id="10_nvtrm"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_plr6o"]
 shader = ExtResource("2_xch1l")
@@ -24,7 +24,7 @@ shader_parameter/color = Color(0.166556, 0.132474, 0.15523, 1)
 [node name="Match" type="Node2D"]
 process_mode = 1
 script = ExtResource("1_dvtnx")
-match_name = "Match 1"
+match_name = "Bloody river"
 
 [node name="MatchUi" type="Node" parent="."]
 script = ExtResource("2_plr6o")
