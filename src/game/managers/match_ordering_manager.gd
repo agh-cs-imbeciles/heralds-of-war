@@ -9,7 +9,7 @@ signal sequence_exhausted
 signal unit_committed(unit: Unit)
 signal unit_uncommitted(unit: Unit)
 
-var player_unit_count_at_last_advance: Dictionary[String, int] = {}
+var player_unit_count_at_last_readjustment: Dictionary[String, int] = {}
 var sequence: Array[String] = []
 var sequence_index: int = 0
 var unit_sequence: Array[Unit] = []
@@ -33,8 +33,8 @@ func __on_match_ready() -> void:
 
 func init_sequence() -> void:
 	var total_unit_count := __board.get_total_unit_count()
-	player_unit_count_at_last_advance = __board.get_player_unit_count()
-	var player_slot_count_to_fill := player_unit_count_at_last_advance \
+	var player_slot_count_to_fill := __board.get_player_unit_count()
+	player_unit_count_at_last_readjustment = player_slot_count_to_fill \
 		.duplicate()
 
 	sequence.clear()
@@ -66,7 +66,6 @@ func init_signal_connections() -> void:
 
 
 func __on_unit_slot_finished(_unit: Unit) -> void:
-	readjust_sequence()
 	advance()
 	uncommit_unit()
 
@@ -88,14 +87,16 @@ func readjust_sequence() -> void:
 	var player_slot_count_to_remove: Dictionary[String, int] = {}
 	for player in __players:
 		var current_ucnt := current_player_unit_count[player]
-		var last_advance_ucnt := player_unit_count_at_last_advance[player]
-		player_slot_count_to_remove[player] = last_advance_ucnt - current_ucnt
+		var last_readjust_ucnt := player_unit_count_at_last_readjustment[player]
+		player_slot_count_to_remove[player] = last_readjust_ucnt - current_ucnt
 
 	for player in __players:
 		while player_slot_count_to_remove[player] > 0:
 			var i := sequence.rfind(player)
 			sequence.remove_at(i)
 			player_slot_count_to_remove[player] -= 1
+
+	player_unit_count_at_last_readjustment = current_player_unit_count
 
 
 func __on_unit_performed_action(unit: Unit) -> void:
@@ -121,8 +122,6 @@ func advance() -> void:
 	print("Sequence %d: Player %s to act" % [sequence_index + 1, player])
 
 	sequence_advanced.emit(sequence, sequence_index, player)
-
-	player_unit_count_at_last_advance = __board.get_player_unit_count()
 
 
 func can_unit_use_slot(unit: Unit) -> bool:
