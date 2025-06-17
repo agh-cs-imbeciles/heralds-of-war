@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=4 uid="uid://bw4ys7cn1q7an"]
+[gd_scene load_steps=15 format=4 uid="uid://bw4ys7cn1q7an"]
 
 [ext_resource type="Script" uid="uid://orar4yfbku55" path="res://src/ui/camera.gd" id="1_5vgm2"]
 [ext_resource type="Script" uid="uid://ctumvccgx6tl8" path="res://src/game/match.gd" id="1_dvtnx"]
@@ -32,19 +32,6 @@ script = ExtResource("2_plr6o")
 [node name="UiCanvasLayer" type="CanvasLayer" parent="MatchUi"]
 process_mode = 3
 
-[node name="EndGamePanel" type="Panel" parent="MatchUi/UiCanvasLayer"]
-visible = false
-material = SubResource("ShaderMaterial_plr6o")
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_toqnb")
-
-[node name="EndGameModal" parent="MatchUi/UiCanvasLayer/EndGamePanel" instance=ExtResource("2_u5ntg")]
-layout_mode = 1
-
 [node name="MarginContainer" type="MarginContainer" parent="MatchUi/UiCanvasLayer"]
 anchors_preset = 15
 anchor_right = 1.0
@@ -66,6 +53,19 @@ size_flags_vertical = 3
 [node name="PlayerTurnDisplay" parent="MatchUi/UiCanvasLayer/MarginContainer/VBoxContainer" instance=ExtResource("5_nvtrm")]
 layout_mode = 2
 size_flags_vertical = 1
+
+[node name="EndGamePanel" type="Panel" parent="MatchUi/UiCanvasLayer"]
+visible = false
+material = SubResource("ShaderMaterial_plr6o")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_toqnb")
+
+[node name="EndGameModal" parent="MatchUi/UiCanvasLayer/EndGamePanel" instance=ExtResource("2_u5ntg")]
+layout_mode = 1
 
 [node name="BoardGridTileMap" type="TileMapLayer" parent="MatchUi"]
 modulate = Color(0.23552, 0.24, 0.1728, 0.0313726)
