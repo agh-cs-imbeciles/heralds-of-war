@@ -45,12 +45,12 @@ func _create_mirrored_pattern(source_pattern: TileMapPattern, map_rect: Rect2i, 
 		# Horizontal reflection
 		if flip_h:
 			# new_x = (left_side + right_side) - old_x
-			mirrored_pos.x = (map_rect.position.x * 2 + map_rect.size.x - 1) - cell.x
+			mirrored_pos.x = (map_rect.position.x + map_rect.size.x) - cell.x
 		
 		# Vertical reflection
 		if flip_v:
 			# new_y = (upper_side + lower_side) - old_y
-			mirrored_pos.y = (map_rect.position.y * 2 + map_rect.size.y - 1) - cell.y
+			mirrored_pos.y = (map_rect.position.y + map_rect.size.y) - cell.y
 
 		# Copying tile data
 		var source_id = source_pattern.get_cell_source_id(cell)
