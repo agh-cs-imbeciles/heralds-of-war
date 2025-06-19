@@ -4,7 +4,7 @@ class_name MatchUi extends Node
 @export var background_color: Color = Color(0.6144, 0.816, 0.96, 1)
 var __default_background_color: Color
 
-@onready var __match: Match = $".."
+@onready var __match: Match = $"../.."
 @onready var __board_ui: BoardUi = $"BoardUi"
 @onready var end_game_panel: Panel = $"UiCanvasLayer/EndGamePanel"
 @onready var player_turn_display: PlayerTurnDisplay \

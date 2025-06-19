@@ -12,7 +12,7 @@ var players: Array[String] = ["A", "B"]
 var phase: Phase = Phase.INIT
 var turn: int = 1
 
-@onready var board: Board = $"Board"
+@onready var board: Board = $"Core/Board"
 var phase_manager: MatchPhaseManager
 var placement_manager: MatchPlacementManager
 var play_manager: MatchPlayManager

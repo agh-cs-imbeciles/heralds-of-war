@@ -9,9 +9,9 @@ var path_finder: AStar2D = AStar2D.new()
 
 @onready var input_manager: BoardInputManager = $"./BoardInputManager"
 @onready var unit_node_container: Node = $"./Units"
-@onready var tile_map: BoardTileMap = $"./BoardTileMap"
+@onready var tile_map: BoardTileMap = $"../../Board/BoardTileMap"
 @onready var obstacle_tile_map: StandardTileMap \
-	= $"./BoardTileMap/ObstacleTileMap"
+	= $"../../Board/BoardTileMap/ObstacleTileMap"
 
 
 func _ready() -> void:
