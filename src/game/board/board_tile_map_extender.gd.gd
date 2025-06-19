@@ -4,14 +4,25 @@ class_name BoardTileMapExtender extends EditorScript
 
 func _run() -> void:
 	var root: Node = get_scene()
-	var board_tile_map: TileMapLayer = root.get_node("Board/BoardTileMap")
-	var background_tile_map_top: TileMapLayer = root.get_node("BackgroundTileMapTop")
-	var background_tile_map_bottom: TileMapLayer = root.get_node("BackgroundTileMapBottom")
+	var board_tile_map: TileMapLayer = root \
+		.get_node("Board/BoardTileMap")
+	var background_tile_map_top: TileMapLayer = root \
+		.get_node("BackgroundTileMapTop")
+	var background_tile_map_bottom: TileMapLayer = root \
+		.get_node("BackgroundTileMapBottom")
 
-	__create_background(board_tile_map, background_tile_map_top, background_tile_map_bottom)
+	__create_background(
+		board_tile_map,
+		background_tile_map_top,
+		background_tile_map_bottom,
+	)
 
 
-func __create_background(board: TileMapLayer, background_tile_map_top: TileMapLayer, background_tile_map_bottom: TileMapLayer) -> void:
+func __create_background(
+	board: TileMapLayer,
+	background_tile_map_top: TileMapLayer,
+	background_tile_map_bottom: TileMapLayer
+) -> void:
 	background_tile_map_top.clear()
 	background_tile_map_bottom.clear()
 
@@ -25,9 +36,24 @@ func __create_background(board: TileMapLayer, background_tile_map_top: TileMapLa
 	var map_size := map_rect.size
 
 	# We generate all variants of mirror images once, before the loop
-	var pattern_h_flipped = __create_mirrored_pattern(original_pattern, map_rect, true, false)
-	var pattern_v_flipped = __create_mirrored_pattern(original_pattern, map_rect, false, true)
-	var pattern_hv_flipped = __create_mirrored_pattern(original_pattern, map_rect, true, true)
+	var pattern_h_flipped := __create_mirrored_pattern(
+		original_pattern,
+		map_rect,
+		true,
+		false,
+	)
+	var pattern_v_flipped := __create_mirrored_pattern(
+		original_pattern,
+		map_rect,
+		false,
+		true,
+	)
+	var pattern_hv_flipped := __create_mirrored_pattern(
+		original_pattern,
+		map_rect,
+		true,
+		true,
+	)
 
 	# We create a 5x5 grid
 	for i in range(-2, 3):
@@ -51,16 +77,28 @@ func __create_background(board: TileMapLayer, background_tile_map_top: TileMapLa
 				[false, false]:
 					target_pattern = original_pattern
 
-			var paste_position = map_rect.position + Vector2i(i * map_size.x, j * map_size.y)
+			var paste_position = map_rect.position \
+				+ Vector2i(i * map_size.x, j * map_size.y)
 
 			# We use your logic to select the background layer
 			if i + j < 1:
-				background_tile_map_top.set_pattern(paste_position, target_pattern)
+				background_tile_map_top.set_pattern(
+					paste_position,
+					target_pattern,
+				)
 			else:
-				background_tile_map_bottom.set_pattern(paste_position, target_pattern)
+				background_tile_map_bottom.set_pattern(
+					paste_position,
+					target_pattern,
+				)
 
 
-func __create_mirrored_pattern(source_pattern: TileMapPattern, map_rect: Rect2i, flip_h: bool, flip_v: bool) -> TileMapPattern:
+func __create_mirrored_pattern(
+	source_pattern: TileMapPattern,
+	map_rect: Rect2i,
+	flip_h: bool,
+	flip_v: bool,
+) -> TileMapPattern:
 	var mirrored_pattern := TileMapPattern.new()
 	var cells := source_pattern.get_used_cells()
 
@@ -70,18 +108,25 @@ func __create_mirrored_pattern(source_pattern: TileMapPattern, map_rect: Rect2i,
 		# Horizontal reflection
 		if flip_h:
 			# new_x = (left_side + right_side) - old_x
-			mirrored_pos.x = (map_rect.position.x + map_rect.size.x - 1) - cell.x
+			mirrored_pos.x = (map_rect.position.x + map_rect.size.x - 1) \
+				- cell.x
 
 		# Vertical reflection
 		if flip_v:
 			# new_y = (upper_side + lower_side) - old_y
-			mirrored_pos.y = (map_rect.position.y + map_rect.size.y - 1) - cell.y
+			mirrored_pos.y = (map_rect.position.y + map_rect.size.y - 1) \
+				- cell.y
 
 		# Copying tile data
 		var source_id = source_pattern.get_cell_source_id(cell)
 		var atlas_coords = source_pattern.get_cell_atlas_coords(cell)
 		var alternative_tile = source_pattern.get_cell_alternative_tile(cell)
 
-		mirrored_pattern.set_cell(mirrored_pos, source_id, atlas_coords, alternative_tile)
+		mirrored_pattern.set_cell(
+			mirrored_pos,
+			source_id,
+			atlas_coords,
+			alternative_tile,
+		)
 
 	return mirrored_pattern
