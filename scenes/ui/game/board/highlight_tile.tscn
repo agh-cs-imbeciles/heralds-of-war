@@ -5,4 +5,4 @@
 [node name="HighlightTile" type="Sprite2D"]
 texture = ExtResource("1_x1l16")
 region_enabled = true
-region_rect = Rect2(0, 352, 32, 32)
+region_rect = Rect2(0, 416, 32, 32)

@@ -5,4 +5,4 @@
 [node name="PlayerUnitTile" type="Sprite2D"]
 texture = ExtResource("1_5p3et")
 region_enabled = true
-region_rect = Rect2(64, 352, 32, 32)
+region_rect = Rect2(64, 416, 32, 32)
