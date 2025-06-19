@@ -1,4 +1,8 @@
+@tool
 class_name MatchUi extends Node
+
+@export var background_color: Color = Color(0.6144, 0.816, 0.96, 1)
+var __default_background_color: Color
 
 @onready var __match: Match = $".."
 @onready var __board_ui: BoardUi = $"BoardUi"
@@ -8,7 +12,15 @@ class_name MatchUi extends Node
 
 
 func _ready() -> void:
-	__match.ready.connect(__on_match_ready)
+	__default_background_color = RenderingServer.get_default_clear_color()
+	RenderingServer.set_default_clear_color(background_color)
+
+	if not Engine.is_editor_hint():
+		__match.ready.connect(__on_match_ready)
+
+
+func _exit_tree() -> void:
+	RenderingServer.set_default_clear_color(__default_background_color)
 
 
 func __on_match_ready() -> void:
