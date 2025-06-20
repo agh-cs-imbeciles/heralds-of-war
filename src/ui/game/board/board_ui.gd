@@ -5,7 +5,7 @@ var UnitState = MatchPlayManager.UnitState
 
 @export var min_z_index = 128
 
-@onready var __match: Match = $"../.."
+@onready var __match: Match = $"../../.."
 @onready var __board: Board = $"../../Board"
 
 
@@ -77,10 +77,14 @@ func darken_player_cells(player: String) -> void:
 
 
 func __on_board_ready() -> void:
+	__board.tile_map.ready.connect(__on_board_tile_map_ready)
+
 	__board.unit_added.connect(__on_unit_added)
 	__board.unit_died.connect(__on_unit_died)
 	__board.input_manager.mouse_left_board.connect(__on_mouse_left_board)
 
+
+func __on_board_tile_map_ready() -> void:
 	hide_player_tile_maps()
 	set_obstacle_z_indicies()
 
