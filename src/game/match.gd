@@ -7,6 +7,7 @@ signal match_ended(victor: String)
 
 @export var match_name: String
 @export var unit_count_per_player: int = 3
+@export var background_color: Color = Color(0.6144, 0.816, 0.96, 1)
 
 var players: Array[String] = ["A", "B"]
 var phase: Phase = Phase.INIT
