@@ -17,13 +17,13 @@ grow_vertical = 2
 [node name="AspectRatioContainer" type="AspectRatioContainer" parent="."]
 layout_mode = 1
 anchors_preset = -1
-anchor_top = 0.4
+anchor_top = 0.43
 anchor_right = 1.0
-anchor_bottom = 0.6
+anchor_bottom = 0.57
 offset_bottom = 14.8
 grow_horizontal = 2
 grow_vertical = 2
-ratio = 2.0
+ratio = 2.5
 
 [node name="VBoxContainer" type="VBoxContainer" parent="AspectRatioContainer"]
 layout_mode = 2
