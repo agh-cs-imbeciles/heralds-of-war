@@ -29,6 +29,14 @@ move_by_mouse = false
 [node name="MatchUi" type="Node" parent="."]
 script = ExtResource("2_38cnk")
 
+[node name="Background" type="ColorRect" parent="MatchUi"]
+z_index = -128
+offset_left = -5000.0
+offset_top = -5000.0
+offset_right = 5000.0
+offset_bottom = 5000.0
+color = Color(0.160784, 0.137255, 0.180392, 1)
+
 [node name="UiCanvasLayer" type="CanvasLayer" parent="MatchUi"]
 process_mode = 3
 
