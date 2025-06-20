@@ -30,7 +30,7 @@ layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 0
 theme = ExtResource("1_7w82d")
-theme_override_font_sizes/font_size = 32
+theme_override_font_sizes/font_size = 48
 text = "Select Match"
 horizontal_alignment = 1
 
@@ -41,6 +41,7 @@ size_flags_vertical = 3
 script = ExtResource("3_c1f42")
 scenes_directory = "res://scenes/matches"
 scene = ExtResource("4_75vmi")
+height_proportion = 0.055
 
 [connection signal="resized" from="AspectRatioContainer/VBoxContainer/Title" to="AspectRatioContainer/VBoxContainer/Title" method="_on_resized"]
 [connection signal="ready" from="AspectRatioContainer/VBoxContainer/MatchEntryVBoxContainer" to="AspectRatioContainer/VBoxContainer/MatchEntryVBoxContainer" method="_on_ready"]
