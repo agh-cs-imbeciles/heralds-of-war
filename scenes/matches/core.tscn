@@ -1,7 +1,8 @@
-[gd_scene load_steps=12 format=4 uid="uid://cv2vaeuigljwt"]
+[gd_scene load_steps=13 format=4 uid="uid://cv2vaeuigljwt"]
 
 [ext_resource type="Script" uid="uid://orar4yfbku55" path="res://src/ui/camera.gd" id="1_vbvyx"]
 [ext_resource type="Script" uid="uid://d21vpkqujjyl2" path="res://src/ui/game/match_ui.gd" id="2_38cnk"]
+[ext_resource type="Theme" uid="uid://b0yl85gha4apv" path="res://themes/main_theme.tres" id="3_38cnk"]
 [ext_resource type="PackedScene" uid="uid://b8estsdk5duw1" path="res://scenes/ui/game/turn/player_turn_display.tscn" id="3_rx08d"]
 [ext_resource type="Shader" uid="uid://d3nwj71uk3tm" path="res://shaders/darkened_blur.gdshader" id="4_q0at2"]
 [ext_resource type="PackedScene" uid="uid://cvrfa8432srf0" path="res://scenes/ui/game/end_game_modal.tscn" id="5_fung0"]
@@ -53,6 +54,18 @@ theme_override_constants/margin_bottom = 12
 
 [node name="VBoxContainer" type="VBoxContainer" parent="MatchUi/UiCanvasLayer/MarginContainer"]
 layout_mode = 2
+
+[node name="TopBar" type="HBoxContainer" parent="MatchUi/UiCanvasLayer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+alignment = 2
+
+[node name="FinishSlotButton" type="Button" parent="MatchUi/UiCanvasLayer/MarginContainer/VBoxContainer/TopBar"]
+layout_mode = 2
+size_flags_horizontal = 8
+theme = ExtResource("3_38cnk")
+theme_override_colors/font_color = Color(0.972096, 0.961728, 0.965598, 1)
+theme_override_font_sizes/font_size = 18
+text = "FINISH SLOT"
 
 [node name="BoxContainer" type="BoxContainer" parent="MatchUi/UiCanvasLayer/MarginContainer/VBoxContainer"]
 layout_mode = 2

@@ -4,9 +4,13 @@ class_name MatchUi extends Node
 @onready var __match: Match = $"../.."
 @onready var __board_ui: BoardUi = $"BoardUi"
 @onready var background: ColorRect = $"Background"
+@onready var main_container: BoxContainer \
+	= $"UiCanvasLayer/MarginContainer/VBoxContainer"
 @onready var end_game_panel: Panel = $"UiCanvasLayer/EndGamePanel"
+@onready var finish_slot_button: Button \
+	= main_container.find_child("FinishSlotButton")
 @onready var player_turn_display: PlayerTurnDisplay \
-	= $"UiCanvasLayer/MarginContainer/VBoxContainer/PlayerTurnDisplay"
+	= main_container.find_child("PlayerTurnDisplay")
 
 
 func _enter_tree() -> void:
@@ -20,11 +24,11 @@ func _ready() -> void:
 
 	if not Engine.is_editor_hint():
 		__match.ready.connect(__on_match_ready)
+		finish_slot_button.hide()
 
 
 func __update_background_color() -> void:
 	background.color = __match.background_color
-
 
 
 func __on_match_ready() -> void:
@@ -47,7 +51,17 @@ func __on_match_ended(victor: String) -> void:
 
 func __on_phase_changed(phase: Match.Phase) -> void:
 	if phase == Match.Phase.PLAY:
+		__init_finish_slot_button()
 		update_player_turn_display()
+
+
+func __init_finish_slot_button() -> void:
+	finish_slot_button.pressed.connect(__on_finish_slot_button_pressed)
+	finish_slot_button.show()
+
+
+func __on_finish_slot_button_pressed() -> void:
+	__match.play_manager.ordering_manager.advance()
 
 
 func __on_unit_died(_unit: Unit) -> void:
