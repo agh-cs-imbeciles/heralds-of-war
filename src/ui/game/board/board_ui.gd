@@ -81,6 +81,7 @@ func __on_board_ready() -> void:
 
 	__board.unit_added.connect(__on_unit_added)
 	__board.unit_died.connect(__on_unit_died)
+	__board.unit_health_lowered.connect(__on_unit_health_lowered)
 	__board.input_manager.mouse_left_board.connect(__on_mouse_left_board)
 
 
@@ -99,6 +100,10 @@ func __on_unit_added(unit: Unit) -> void:
 func __on_unit_moved(unit: Unit, from: Vector2i) -> void:
 	set_unit_z_index(unit)
 	update_player_unit_tile(unit, from)
+
+
+func __on_unit_health_lowered(unit: Unit) -> void:
+	resize_health_bar(unit)
 
 
 func __on_unit_died(unit: Unit) -> void:
@@ -361,3 +366,12 @@ func get_tile_z_index(map_position: Vector2i) -> int:
 	return map_position.y * board_rect.size.y \
 		+ map_position.x \
 		+ min_z_index
+
+
+func resize_health_bar(
+	unit: Unit
+) -> void:
+	unit.find_child("HealthBar").set_health(
+		unit.health,
+		unit.initial_health,
+	)
