@@ -138,3 +138,4 @@ func perform_unit_attack(attacking: Unit, attacked: Unit) -> void:
 
 func finish_slot() -> void:
 	unit_slot_finished.emit(ordering_manager.committed_unit)
+	unfocus_unit()

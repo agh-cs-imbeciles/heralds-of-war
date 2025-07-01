@@ -61,7 +61,7 @@ func __init_finish_slot_button() -> void:
 
 
 func __on_finish_slot_button_pressed() -> void:
-	__match.play_manager.ordering_manager.advance()
+	__match.play_manager.finish_slot()
 
 
 func __on_unit_died(_unit: Unit) -> void:
