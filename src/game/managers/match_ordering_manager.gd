@@ -103,7 +103,7 @@ func __on_unit_performed_action(unit: Unit) -> void:
 	if committed_unit == null:
 		commit_unit(unit)
 	if unit.is_stamina_exhausted():
-		__match.play_manager.unit_slot_finished.emit(unit)
+		__match.play_manager.finish_slot()
 
 
 func get_current_player() -> String:
