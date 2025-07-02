@@ -77,11 +77,6 @@ func move(to: Vector2i) -> void:
 	action_performed.emit(self)
 
 
-func attack() -> void:
-	deplete_stamina(attack_cost)
-	action_performed.emit(self)
-
-
 func receive_damage(enemy_attack_strength: int) -> void:
 	health -= enemy_attack_strength * (100 - defense) / 100.0 as int
 

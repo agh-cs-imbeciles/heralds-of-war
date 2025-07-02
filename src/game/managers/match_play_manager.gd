@@ -121,19 +121,12 @@ func unfocus_unit() -> void:
 
 
 func perform_unit_attack(attacking: Unit, attacked: Unit) -> void:
-	var attacked_position = attacked.map_position
 	if not is_instance_of(attacking, MeleeUnit):
 		return
-	if not attacking.is_move_attackable(attacked_position):
+	if not attacking.is_move_attackable(attacked.map_position):
 		return
 
-	var to_move = attacking.get_attack_move(attacked_position)
-
-	if to_move != attacking.map_position:
-		attacking.move(to_move)
-	attacking.attack()
-
-	attacked.receive_damage(attacking.attack_strength)
+	attacking.attack(attacked)
 
 
 func finish_slot() -> void:
