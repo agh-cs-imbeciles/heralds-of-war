@@ -62,6 +62,17 @@ func can_attack(map_index: Vector2i) -> bool:
 	return false
 
 
+func attack(attacked_unit: Unit) -> void:
+	var to_move := get_attack_move(attacked_unit.map_position)
+	if to_move != map_position:
+		move(to_move)
+
+	attacked_unit.receive_damage(attack_strength)
+	deplete_stamina(attack_cost)
+
+	action_performed.emit(self)
+
+
 func is_enemy_in_attack_range() -> bool:
 	var attack_cells := __get_attack_cells(map_position)
 	for cell in attack_cells:
