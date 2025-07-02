@@ -5,6 +5,7 @@ class_name Unit
 signal moved(unit: Unit, from: Vector2i)
 signal died(unit: Unit)
 signal action_performed(unit: Unit)
+signal health_changed(unit: Unit, health: int, health_before: int)
 
 @export var offset: Vector2
 @export var initial_position: Vector2i
@@ -78,6 +79,7 @@ func move(to: Vector2i) -> void:
 
 
 func receive_damage(enemy_attack_strength: int) -> void:
+	var health_before := health
 	health -= enemy_attack_strength * (100 - defense) / 100.0 as int
 
 	print("Unit at position %s has received damage" % map_position)
@@ -86,6 +88,8 @@ func receive_damage(enemy_attack_strength: int) -> void:
 		__on_died()
 	else:
 		print("Current health: %s" % health)
+
+	health_changed.emit(self, health, health_before)
 
 
 func __on_died() -> void:

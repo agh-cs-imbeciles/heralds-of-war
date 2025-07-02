@@ -12,15 +12,11 @@ var UnitState = MatchPlayManager.UnitState
 var highlight_tile_scene: PackedScene = preload(
 	"res://scenes/ui/game/board/highlight_tile.tscn"
 )
-var player_unit_tile: PackedScene = preload(
-	"res://scenes/ui/game/board/player_unit_tile.tscn"
-)
 
 var __hover_tile: Sprite2D
 var __focus_tile: Sprite2D
 var __commit_tile: Sprite2D
 var __marked_tiles: Array[Sprite2D] = []
-var __player_unit_tiles: Dictionary[String, Sprite2D] = {}
 
 
 func _ready() -> void:
@@ -80,7 +76,7 @@ func __on_board_ready() -> void:
 	__board.tile_map.ready.connect(__on_board_tile_map_ready)
 
 	__board.unit_added.connect(__on_unit_added)
-	__board.unit_died.connect(__on_unit_died)
+	__board.unit_health_changed.connect(__on_unit_health_changed)
 	__board.input_manager.mouse_left_board.connect(__on_mouse_left_board)
 
 
@@ -93,16 +89,18 @@ func __on_unit_added(unit: Unit) -> void:
 	unit.moved.connect(__on_unit_moved)
 
 	set_unit_z_index(unit)
-	add_player_unit_tile(unit)
 
 
-func __on_unit_moved(unit: Unit, from: Vector2i) -> void:
+func __on_unit_moved(unit: Unit, _from: Vector2i) -> void:
 	set_unit_z_index(unit)
-	update_player_unit_tile(unit, from)
 
 
-func __on_unit_died(unit: Unit) -> void:
-	remove_player_unit_tile(unit)
+func __on_unit_health_changed(
+	unit: Unit,
+	_health: int,
+	_health_before: int,
+) -> void:
+	update_unit_health_bar(unit)
 
 
 func __on_mouse_entered_cell_placement_phase(cell_position: Vector2i) -> void:
@@ -321,43 +319,15 @@ func highlight_player_units(player: String) -> void:
 			else Color(0.4, 0.4, 0.4)
 
 
-func add_player_unit_tile(unit: Unit) -> Sprite2D:
-	var tile: Sprite2D = player_unit_tile.instantiate()
-	tile.name = "PlayerUnitTile%s" % __player_unit_tiles.size()
-	tile.position = __board.tile_map.map_to_local(unit.map_position)
-	tile.modulate = Color("#1ad9ff") if unit.player == "A" else Color("#ff1a57")
-	tile.z_index = 63
-
-	var map_position_key := VectorUtils.vector2i_to_string(unit.map_position)
-	__player_unit_tiles.set(map_position_key, tile)
-
-	add_child(tile)
-
-	return tile
-
-
-func update_player_unit_tile(unit: Unit, previous_position: Vector2i) -> void:
-	var map_position_key := VectorUtils.vector2i_to_string(unit.map_position)
-	var old_map_position_key := VectorUtils.vector2i_to_string(
-		previous_position
-	)
-	var tile: Sprite2D = __player_unit_tiles.get(old_map_position_key)
-
-	__player_unit_tiles.erase(old_map_position_key)
-	tile.position = __board.tile_map.map_to_local(unit.map_position)
-	__player_unit_tiles.set(map_position_key, tile)
-
-
-func remove_player_unit_tile(unit: Unit) -> void:
-	var map_position_key := VectorUtils.vector2i_to_string(unit.map_position)
-	var tile: Sprite2D = __player_unit_tiles.get(map_position_key)
-
-	remove_child(tile)
-	__player_unit_tiles.erase(map_position_key)
-
-
 func get_tile_z_index(map_position: Vector2i) -> int:
 	var board_rect := __board.tile_map.get_used_rect()
 	return map_position.y * board_rect.size.y \
 		+ map_position.x \
 		+ min_z_index
+
+
+func update_unit_health_bar(
+	unit: Unit
+) -> void:
+	var health_bar: UnitHealthBar = unit.find_child("HealthBar")
+	health_bar.set_health(unit.health)
