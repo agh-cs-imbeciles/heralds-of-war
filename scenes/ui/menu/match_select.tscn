@@ -41,7 +41,7 @@ size_flags_vertical = 3
 script = ExtResource("3_c1f42")
 scenes_directory = "res://scenes/matches"
 scene = ExtResource("4_75vmi")
-height_proportion = 0.055
+height_proportion = 0.2
 
 [connection signal="resized" from="AspectRatioContainer/VBoxContainer/Title" to="AspectRatioContainer/VBoxContainer/Title" method="_on_resized"]
 [connection signal="ready" from="AspectRatioContainer/VBoxContainer/MatchEntryVBoxContainer" to="AspectRatioContainer/VBoxContainer/MatchEntryVBoxContainer" method="_on_ready"]

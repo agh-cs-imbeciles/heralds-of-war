@@ -9,7 +9,7 @@
 [node name="Match" type="Node2D"]
 process_mode = 1
 script = ExtResource("1_dvtnx")
-match_name = "Match 1"
+match_name = "Bloody river"
 
 [node name="Core" parent="." instance=ExtResource("2_f4xsg")]
 
