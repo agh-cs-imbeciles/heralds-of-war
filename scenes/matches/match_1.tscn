@@ -1,7 +1,7 @@
 [gd_scene load_steps=6 format=4 uid="uid://bw4ys7cn1q7an"]
 
 [ext_resource type="Script" uid="uid://ctumvccgx6tl8" path="res://src/game/match.gd" id="1_dvtnx"]
-[ext_resource type="PackedScene" uid="uid://cv2vaeuigljwt" path="res://scenes/matches/core.tscn" id="2_f4xsg"]
+[ext_resource type="PackedScene" path="res://scenes/matches/core.tscn" id="2_f4xsg"]
 [ext_resource type="TileSet" uid="uid://xd0jqo1f7ya4" path="res://assets/resources/terrain_tileset.tres" id="3_dvtnx"]
 [ext_resource type="Script" uid="uid://cgpanl31l6m4r" path="res://src/game/board/board_tile_map.gd" id="6_xch1l"]
 [ext_resource type="Script" uid="uid://bruhbofycekue" path="res://src/standard_tile_map.gd" id="10_nvtrm"]
@@ -9,7 +9,7 @@
 [node name="Match" type="Node2D"]
 process_mode = 1
 script = ExtResource("1_dvtnx")
-match_name = "Match 1"
+match_name = "Bloody River"
 
 [node name="Core" parent="." instance=ExtResource("2_f4xsg")]
 
