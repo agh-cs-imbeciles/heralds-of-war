@@ -13,22 +13,34 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+theme = ExtResource("2_r4xos")
 
-[node name="AspectRatioContainer" type="AspectRatioContainer" parent="."]
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
 layout_mode = 1
 anchors_preset = -1
-anchor_top = 0.43
+anchor_top = 0.15
 anchor_right = 1.0
-anchor_bottom = 0.57
-offset_bottom = 14.8
+anchor_bottom = 0.85
 grow_horizontal = 2
 grow_vertical = 2
-ratio = 2.5
 
-[node name="VBoxContainer" type="VBoxContainer" parent="AspectRatioContainer"]
+[node name="GameTitle" type="Label" parent="VBoxContainer"]
 layout_mode = 2
+theme_override_font_sizes/font_size = 50
+text = "HERALDS OF WAR"
+horizontal_alignment = 1
 
-[node name="StartGameButton" type="Button" parent="AspectRatioContainer/VBoxContainer"]
+[node name="VSpacer1" type="Control" parent="VBoxContainer"]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+
+[node name="StartGameButton" type="Button" parent="VBoxContainer/VBoxContainer"]
+custom_minimum_size = Vector2(196, 0)
 layout_mode = 2
 size_flags_vertical = 3
 theme = ExtResource("2_r4xos")
@@ -36,13 +48,19 @@ text = "START GAME"
 script = ExtResource("2_q18yf")
 scene_to_change = ExtResource("3_r4xos")
 
-[node name="ExitGameButton" type="Button" parent="AspectRatioContainer/VBoxContainer"]
+[node name="ExitGameButton" type="Button" parent="VBoxContainer/VBoxContainer"]
+custom_minimum_size = Vector2(196, 0)
 layout_mode = 2
 size_flags_vertical = 3
 theme = ExtResource("2_r4xos")
 text = "EXIT GAME"
 script = ExtResource("3_ldhvw")
 
-[connection signal="resized" from="AspectRatioContainer/VBoxContainer/StartGameButton" to="AspectRatioContainer/VBoxContainer/StartGameButton" method="__resize_font"]
-[connection signal="pressed" from="AspectRatioContainer/VBoxContainer/ExitGameButton" to="AspectRatioContainer/VBoxContainer/ExitGameButton" method="__exit_game"]
-[connection signal="resized" from="AspectRatioContainer/VBoxContainer/ExitGameButton" to="AspectRatioContainer/VBoxContainer/ExitGameButton" method="__resize_font"]
+[node name="VSpacer2" type="Control" parent="VBoxContainer"]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+size_flags_vertical = 3
+
+[connection signal="resized" from="VBoxContainer/VBoxContainer/StartGameButton" to="VBoxContainer/VBoxContainer/StartGameButton" method="__resize_font"]
+[connection signal="pressed" from="VBoxContainer/VBoxContainer/ExitGameButton" to="VBoxContainer/VBoxContainer/ExitGameButton" method="__exit_game"]
+[connection signal="resized" from="VBoxContainer/VBoxContainer/ExitGameButton" to="VBoxContainer/VBoxContainer/ExitGameButton" method="__resize_font"]
