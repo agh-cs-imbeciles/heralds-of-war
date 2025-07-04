@@ -1,10 +1,12 @@
-[gd_scene load_steps=13 format=4 uid="uid://cv2vaeuigljwt"]
+[gd_scene load_steps=15 format=4 uid="uid://cv2vaeuigljwt"]
 
 [ext_resource type="Script" uid="uid://orar4yfbku55" path="res://src/ui/camera.gd" id="1_vbvyx"]
 [ext_resource type="Script" uid="uid://d21vpkqujjyl2" path="res://src/ui/game/match_ui.gd" id="2_38cnk"]
 [ext_resource type="Theme" uid="uid://b0yl85gha4apv" path="res://themes/main_theme.tres" id="3_38cnk"]
 [ext_resource type="PackedScene" uid="uid://b8estsdk5duw1" path="res://scenes/ui/game/turn/player_turn_display.tscn" id="3_rx08d"]
+[ext_resource type="Script" uid="uid://cmj15i03jv6b" path="res://src/ui/button/change_scene_button.gd" id="4_fung0"]
 [ext_resource type="Shader" uid="uid://d3nwj71uk3tm" path="res://shaders/darkened_blur.gdshader" id="4_q0at2"]
+[ext_resource type="PackedScene" uid="uid://duqxbwqid80mr" path="res://scenes/ui/menu/menu.tscn" id="5_4n14s"]
 [ext_resource type="PackedScene" uid="uid://cvrfa8432srf0" path="res://scenes/ui/game/end_game_modal.tscn" id="5_fung0"]
 [ext_resource type="TileSet" uid="uid://xd0jqo1f7ya4" path="res://assets/resources/terrain_tileset.tres" id="6_4n14s"]
 [ext_resource type="Script" uid="uid://b5lfouqrpasn3" path="res://src/ui/game/board/board_ui.gd" id="7_ssde5"]
@@ -66,6 +68,17 @@ theme = ExtResource("3_38cnk")
 theme_override_colors/font_color = Color(0.972096, 0.961728, 0.965598, 1)
 theme_override_font_sizes/font_size = 18
 text = "FINISH SLOT"
+
+[node name="BackToMenuButton" type="Button" parent="MatchUi/UiCanvasLayer/MarginContainer/VBoxContainer/TopBar"]
+layout_mode = 2
+size_flags_horizontal = 8
+theme = ExtResource("3_38cnk")
+theme_override_colors/font_color = Color(0.972096, 0.961728, 0.965598, 1)
+theme_override_font_sizes/font_size = 18
+text = "BACK TO MENU"
+script = ExtResource("4_fung0")
+scene_to_change = ExtResource("5_4n14s")
+metadata/_custom_type_script = "uid://cmj15i03jv6b"
 
 [node name="BoxContainer" type="BoxContainer" parent="MatchUi/UiCanvasLayer/MarginContainer/VBoxContainer"]
 layout_mode = 2
