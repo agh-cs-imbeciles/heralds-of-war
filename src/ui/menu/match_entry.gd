@@ -1,4 +1,4 @@
-class_name MatchEntry extends Control
+class_name MatchEntry extends HBoxContainer
 
 @onready var __button: ChangeSceneButton = $Button
 @export var text: String = ""

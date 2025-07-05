@@ -1,7 +1,7 @@
 class_name Dir extends Node
 
 
-static func get_all_scenes_paths_from_folder(path: String) -> Array[String]:
+static func get_all_scene_paths(path: String) -> Array[String]:
 	var paths: Array[String] = []
 	var dir = DirAccess.open(path)
 	if dir:
@@ -13,5 +13,5 @@ static func get_all_scenes_paths_from_folder(path: String) -> Array[String]:
 				paths.append(scene_path)
 			file_name = dir.get_next()
 		dir.list_dir_end()
-	
+
 	return paths
