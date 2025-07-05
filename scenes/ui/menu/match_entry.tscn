@@ -4,25 +4,17 @@
 [ext_resource type="Script" uid="uid://cmj15i03jv6b" path="res://src/ui/button/change_scene_button.gd" id="2_cw6wu"]
 [ext_resource type="Theme" uid="uid://b0yl85gha4apv" path="res://themes/main_theme.tres" id="2_od57r"]
 
-[node name="MatchEntry" type="Control"]
+[node name="MatchEntry" type="HBoxContainer"]
 process_mode = 3
-layout_mode = 3
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
+offset_right = 100.0
+offset_bottom = 20.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 script = ExtResource("1_jmxgq")
 
 [node name="Button" type="Button" parent="."]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
+layout_mode = 2
+size_flags_horizontal = 3
 theme = ExtResource("2_od57r")
 script = ExtResource("2_cw6wu")
 
