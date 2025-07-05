@@ -6,16 +6,21 @@ class_name AbstractSceneList extends Control
 @export var height_proportion = 0.1
 
 
-func __get_scenes_paths() -> Array[String]:
-	return Dir.get_all_scenes_paths_from_folder(scenes_directory)
-
-
 func __load_list_elements(_scene_paths: Array[String]) -> void:
 	pass
 
 
 func _on_tree_entered() -> void:
-	var paths = __get_scenes_paths()
+	var file = FileAccess.open(
+		"res://assets/resources/match_manifest.json",
+		FileAccess.READ,
+	)
+	var paths: Array[String]
+	paths.assign(JSON.parse_string(file.get_as_text()).map(
+		func(path: String): return "res://scenes/matches/" + path
+	))
+	file.close()
+
 	__load_list_elements(paths)
 
 
