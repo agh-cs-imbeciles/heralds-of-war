@@ -4,3 +4,6 @@
 
 # Ignore Godot import files in non-Godot specific directories
 docs/**/*.import
+
+# Build files
+/build/
